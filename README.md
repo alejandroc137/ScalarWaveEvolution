@@ -13,7 +13,7 @@ We request that modifications or extensions leading to a scientific publication 
 <center> <em>Feel free to use images and movies produced with this code (with attribution) for your next presentation! </em> </center>
 
 _______
-![GitHub last commit](https://img.shields.io/github/last-commit/)
+![GitHub last commit](https://img.shields.io/github/last-commit/alejandroc137/ScalarWaveEvolution)
 _______
 
 
