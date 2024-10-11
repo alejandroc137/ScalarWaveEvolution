@@ -2,8 +2,6 @@
 
 [![24XXX](https://img.shields.io/badge/arXiv-24XXX-b31b1b.svg)](https://arxiv.org/abs/24) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alejandroc137/ScalarWaveEvolution/License.txt)
 
-Author: Alejandro Cárdenas-Avendaño
-
 This code implements a parallel solver for the non-linear wave equation for any general 3+1 dimensional static, spherically symmetric, and asymptotically flat (horizonless) spacetimes, as described in Ref [1]. The evolution is performed on a reduced 2+1 dimensional computational grid by leveraging axisymmetry, allowing for high spatial resolution with limited computational resources. The axisymmetry of both the solution and the background spacetime enables the use of the modified Cartoon method [2], an efficient approach to dimensional reduction.
 
 The system evolves in time using the 4th-order Runge-Kutta (RK4) method, while spatial derivatives are computed using 4th-order finite differences. The code is flexible, supporting different spacetime metrics and initial conditions (ICs), making it adaptable for various scenarios.
