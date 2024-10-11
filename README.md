@@ -1,4 +1,4 @@
-# **Evolutuon of the Non-Linear Wave Equation**
+# **Evolution of the Non-Linear Wave Equation**
 
 [![24XXX](https://img.shields.io/badge/arXiv-24XXX-b31b1b.svg)](https://arxiv.org/abs/24) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alejandroc137/ScalarWaveEvolution/License.txt)
 
