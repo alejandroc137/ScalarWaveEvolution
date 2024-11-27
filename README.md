@@ -1,6 +1,6 @@
 # **Evolution of the Non-Linear Wave Equation**
 
-[![24XXX](https://img.shields.io/badge/arXiv-24XXX-b31b1b.svg)](https://arxiv.org/abs/24) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alejandroc137/ScalarWaveEvolution/License.txt)
+[![arXiv:2411.17445](https://img.shields.io/badge/arXiv-2411.17445-b31b1b.svg)](https://arxiv.org/abs/2411.17445) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/alejandroc137/ScalarWaveEvolution/License.txt)
 
 This code implements a parallel solver for the non-linear wave equation for any general 3+1 dimensional static, spherically symmetric, and asymptotically flat (horizonless) spacetimes, as described in Ref [1]. The evolution is performed on a reduced 2+1 dimensional computational grid by leveraging axisymmetry, allowing for high spatial resolution with limited computational resources. The axisymmetry of both the solution and the background spacetime enables the use of the modified Cartoon method [2], an efficient approach to dimensional reduction.
 
@@ -107,7 +107,7 @@ Both files are stored in the `Results` folder, which is created automatically if
 
 ### **References**
 
-[1] G. Benomio, A. Cardenas-Avendano, F. Pretorius, and A. Sullivan, On turbulence for spacetimes with stable trapping. [arXiv:24XXX](https://arxiv.org/abs/gr-qc/XXXX)
+[1] G. Benomio, A. Cardenas-Avendano, F. Pretorius, and A. Sullivan, On turbulence for spacetimes with stable trapping. [arXiv:2411.17445](https://arxiv.org/abs/2411.17445)
 
 [2] F. Pretorius, Numerical relativity using a generalized harmonic decomposition, Class. Quant.
 Grav. 22, 425 (2005), [arXiv:0407110](https://arxiv.org/abs/gr-qc/0407110)
