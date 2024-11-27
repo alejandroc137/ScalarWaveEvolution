@@ -84,7 +84,7 @@ The script parses several command-line arguments using the `ArgParse` package. T
 ### **Initial Conditions and Metric**
 The script supports different spacetime metrics:
 - **Minkowski** spacetime 
-- **General** spacetime (an four-dimensional static, spherically symmetric, and asymptotically flat (horizonless) spacetimes). It currently is parametrized with metric potentials: `a = 0.026`, `b = 11.20`.
+- **General** spacetime (an four-dimensional static, spherically symmetric, and asymptotically flat (horizonless) spacetimes). It currently is parametrized with a metric potential and two parameters (see Ref. [1] for the details): `a = 0.026`, `b = 11.20`.
 
 The `ICs!` function initializes the scalar field `phi` and momentum `pi`, along with the metric components and their derivatives.
 
@@ -107,7 +107,7 @@ Both files are stored in the `Results` folder, which is created automatically if
 
 ### **References**
 
-[1] G. Benomio, A. Cardenas-Avendano, F. Pretorius, and A. Sullivan, On turbulence for spacetimes with stable trapping. [arXiv:2411.17445](https://arxiv.org/abs/2411.17445)
+[1] G. Benomio, A. Cardenas-Avendano, F. Pretorius, and A. Sullivan, *On turbulence for spacetimes with stable trapping*. [arXiv:2411.17445](https://arxiv.org/abs/2411.17445)
 
-[2] F. Pretorius, Numerical relativity using a generalized harmonic decomposition, Class. Quant.
+[2] F. Pretorius, *Numerical relativity using a generalized harmonic decomposition*, Class. Quant.
 Grav. 22, 425 (2005), [arXiv:0407110](https://arxiv.org/abs/gr-qc/0407110)
