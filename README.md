@@ -112,7 +112,7 @@ Both files are stored in the `Results` folder, which is created automatically if
 
 ### **References**
 
-[1] G. Benomio, A. Cardenas-Avendano, F. Pretorius, and A. Sullivan, *On turbulence for spacetimes with stable trapping*. [arXiv:2411.17445](https://arxiv.org/abs/2411.17445)
+[1] G. Benomio, A. Cardenas-Avendano, F. Pretorius, and A. Sullivan, *On turbulence for spacetimes with stable trapping*. [Phys. Rev. D 111, 104037, 2025](https://doi.org/10.1103/PhysRevD.111.104037) [arXiv:2411.17445](https://arxiv.org/abs/2411.17445)
 
 [2] F. Pretorius, *Numerical relativity using a generalized harmonic decomposition*, Class. Quant.
 Grav. 22, 425 (2005), [arXiv:0407110](https://arxiv.org/abs/gr-qc/0407110)
