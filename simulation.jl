@@ -35,6 +35,7 @@ function parse_commandline()
             arg_type = Float64
             default = 0.95
         "--amp"
+            #Change amplitude here
             help = "Amplitude"
             arg_type = Float64
             default = 4000.0
@@ -54,7 +55,7 @@ orderFD=convert(Int64,4)
 const Am=parsed_args["amp"];
 const r0=0.02;
 const r1=0.6;
-const ells=[1,2]
+const ells=[0]#[1,2]
 const polylogexp=4.0
 
 # Resolution of the grids
@@ -97,11 +98,23 @@ filename=spacetime
 
 #For the metric potential
 if spacetime=="Minkowski"
-    const a=1e8;
-    const b=1e8;
+    #for f(r)=1-2mr^2/(r^3+2l^2m)
+    const l=1e8;
+    const m=1e8;
+    
+    # #for f(r)=1-r^2/(a+br^4)
+    # const a=1e8;
+    # const b=1e8;
 else
-    const a=0.026;
-    const b=11.20;
+    #f(r)=1-2mr^2/(r^3+2l^2m)
+    const l=1e-6;
+    const m=1e-6;
+    
+    #f(r)=1-r^2/(a+br^4)
+    # const a=0.026;
+    # const b=11.20;
+    # const a=1e8;
+    # const b=1e8;
 end
 
 const dt=lambda*dy;
@@ -121,7 +134,8 @@ const roundfact=1e8
 #Cadence to auxiliar quantites 
 const dtRaux=0.05;
 #Cadence to store the field and its time derivative
-const dtRaux2=0.1;
+#dt
+const dtRaux2=0.05;
 
 const NtR=convert(Int64,round((Tf-Ti)/dtRaux));
 #Cadence to save the max vals
@@ -250,6 +264,30 @@ println("Computing the metric derivatives");
 
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
+#Checks of the metric
+h5write(location*"Metric_$(filename)_$(dy).h5", "gtt",gtt[:,:,:])
+h5write(location*"Metric_$(filename)_$(dy).h5", "gxx",gxx[:,:,:])
+h5write(location*"Metric_$(filename)_$(dy).h5", "gxy",gxy[:,:,:])
+h5write(location*"Metric_$(filename)_$(dy).h5", "gxz",gxz[:,:,:])
+h5write(location*"Metric_$(filename)_$(dy).h5", "sqrtming",sqrtming[:,:,:])
+
+#Checks of the metric first derivatives
+h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gtt_dx",gtt_dx[:,:,:])
+h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gxx_dx",gxx_dx[:,:,:])
+h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gxy_dx",gxy_dx[:,:,:])
+h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gxz_dx",gxz_dx[:,:,:])
+h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "sqrtming_dx",sqrtming_dx[:,:,:])
+
+println(any(isnan.(gtt)),any(isnan.(gxx)),any(isnan.(gxy)),any(isnan.(gxz)),any(isnan.(gyy)),any(isnan.(gyz)),any(isnan.(gzz)),any(isnan.(sqrtming)))
+
+println(any(isnan.(gtt_dx)),any(isnan.(gxx_dx)),any(isnan.(gxy_dx)),any(isnan.(gxz_dx)),any(isnan.(gyy_dx)),any(isnan.(gyz_dx)),any(isnan.(gzz_dx)),any(isnan.(sqrtming_dx)))
+
+# ycase=4;
+# zcase=60;
+# println(xs[1]," ",ys[ycase]," ",zs[zcase]," ",gtt[1,ycase,zcase]," ",gtt_dx[1,ycase,zcase]," ",gxx_dx[1,ycase,zcase]," ",gyy_dy[1,ycase,zcase]," ",gxy_dx[1,ycase,zcase]," ",sqrtming_dy[1,ycase,zcase]," ",sqrtming_dz[1,ycase,zcase])
+
+# break;
+
 fileInfo=location*"Info_Wave_$(filename)_$(Am)_$(dy)_$(lambda)_$(epsKO)_$(Ti)_$(Tf).txt"
 fileMax=location*"Max_Wave_$(filename)_$(Am)_$(dy)_$(lambda)_$(epsKO)_$(Ti)_$(Tf).h5"
 
@@ -258,7 +296,11 @@ if isfile(fileInfo)
     println("Info File Overwritten")
 end
 
-write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
+#for f(r)=1-2mr^2/(r^3+2l^2m)
+write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
+    
+# #for f(r)=1-r^2/(a+br^4)
+# write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
 
 println("Evolving the wave equation");
 @time simulation!(size(ts)[1],dtR,phi_M1,pi_M1,phi_M2,pi_M2,phidx_M,pidx_M,phidy_M,pidy_M,phidz_M,pidz_M,phidot_M,pidot_M,phidxdx_M,phidxdy_M,phidxdz_M,phidydy_M,phidydz_M,phidzdz_M)

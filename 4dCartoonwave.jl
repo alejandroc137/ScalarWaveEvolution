@@ -214,17 +214,21 @@ function RHS_Eq!(phi_Mn,pi_Mn,phidx_Mn,pidx_Mn,phidy_Mn,pidy_Mn,phidz_Mn,pidz_Mn
         phidzdz_Mn[iy,Nz0-2]=bw_diff(phidz_Mn,iy,Nz0-2,dz,bw1z)
     end
 
-    #Evolution equations
+    #Evolution equations (Eqs. 23, 24)
     @inbounds Threads.@threads for iy=2:(Ny0-1)
         @inbounds for iz=2:(Nz0-1)
 
+            #Eq. 23
             phidot_Mn[iy,iz]=-pi_Mn[iy,iz]/gtt[iy,iz];
 
             #Linear Wave Equation
-            #pidot_Mn[iy,iz]=(                                                 gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
+            pidot_Mn[iy,iz]=(gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
             
-            #Non-Linear Wave Equation 
-            pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]*phi_Mn[iy,iz]^3.0)    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
+            #Non-Linear Wave Equation (Eq. 24: phi^3)
+            #pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]*phi_Mn[iy,iz]^3.0)    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
+            
+            #Non-Linear Wave Equation @Truong
+            #pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]*((-pi_Mn[iy,iz]/gtt[iy,iz])^2.0*phi_Mn[iy,iz] + phi_Mn[iy,iz]^2.0*(-pidot_Mn[iy,iz]/gtt[iy,iz])))    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
             
         end
     end
@@ -268,11 +272,11 @@ function spatial!(f,dyf,dzf)
 
 end
 
+#Linear
 function energyC(Qdx,Qdy,Qdz,Qdot)
     nrg=0.0;
     @inbounds for iy=2:(Ny0-1)
         @inbounds for iz=2:(Nz0-1)
-                #Linear
 
                 fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
                 
@@ -282,6 +286,7 @@ function energyC(Qdx,Qdy,Qdz,Qdot)
     return nrg
 end
 
+#Nonlinear
 function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
     nrg=0.0;
     @inbounds for iy=2:yvaltest

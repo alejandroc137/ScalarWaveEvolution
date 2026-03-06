@@ -23,7 +23,8 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
     
                 spatial!(phidot_M,phidotdy_M,phidotdz_M)
 
-                energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
+                #Comment/uncomment as needed
+                # energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
 
                 fileData=location*"Wave_$(filename)_$(Am)_$(ts[t])_$(dy)_$(lambda)_$(epsKO).h5"
                 # #=
@@ -35,11 +36,15 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 #These two are mandatory to store! Used to continue an evolution
                 h5write(fileData, "phi",phi_Mn1[:,:])
                 h5write(fileData, "pi",pi_Mn1[:,:])
-                
-                h5write(fileData, "energy",energy)
+                h5write(fileData, "phidot",phidot_Mn[:,:]) # @Truong
+                # h5write(fileData, "pidot",pidot_Mn[:,:]) # @Truong
+
+                #Comment/uncomment as needed
+                # h5write(fileData, "energy",energy)
                
                 println("");
-                println("Energy ",energy);
+                #Comment/uncomment as needed
+                # println("Energy ",energy);
                 println("");
             end
 
@@ -58,14 +63,13 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
 
         pidotmaxval[t]=maximum(abs.(pidot_Mn[1:yvaltest,zvaltest1:zvaltest2]))
 
-
+        #Second angular derivative of the field in compactified coordinates
         @inbounds Threads.@threads for iy=2:(Ny0-1)
             @inbounds for iz=2:(Nz0-1)
                     phik1_M[iy,iz] = (((-π*(1.0+cos(π*ys[iy]))*sqrt(tan(π*ys[iy]/2.0)^2.0+tan(π*zs[iz]/2.0)^2.0))*phidy_Mn[iy,iz]/sqrt(1.0+cot(π*ys[iy]/2.0)^2.0*tan(π*zs[iz]/2.0)^2.0))+4.0*tan(π*ys[iy]/2.0)^2.0*phidxdx_Mn[iy,iz])/π^2.0;
                     pik1_M[iy,iz] = ((pi*(-2.0 + (-1.0 + cos(pi*ys[iy]))*cos(pi*zs[iz]))*sin(pi*zs[iz])*phidz_Mn[iy,iz])/(1.0 + cos(pi*ys[iy])) + (2.0*(4.0*cos((pi*zs[iz])/2.0)^6.0*tan((pi*ys[iy])/2.0)^2.0*phidzdz_Mn[iy,iz] + (sin((pi*ys[iy])/2.0)^2.0*sqrt(1.0 + cot((pi*ys[iy])/2.0)^2.0*tan((pi*zs[iz])/2.0)^2.0)*(pi*(-2.0 + cos(pi*ys[iy])*(-1.0 + cos(pi*zs[iz])))*phidy_Mn[iy,iz] - (2.0*sin(pi*zs[iz]) + sin(2.0*pi*zs[iz]))*phidydz_Mn[iy,iz]))/sqrt(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)+ 4.0*cos((pi*ys[iy])/2.0)^4.0*sin((pi*zs[iz])/2.0)^2.0*phidydy_Mn[iy,iz]))/(1.0 + cos(pi*zs[iz])))/pi^2.0;
             end
         end
-
         phidthdthmaxval[t]=maximum(abs.(pik1_M[1:yvaltest,zvaltest1:zvaltest2]))
 
         #Fourth order Runge-Kutta for the time integration
