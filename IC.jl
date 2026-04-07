@@ -47,6 +47,28 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
                 #Minus square root of the determinant of the metric
                 sqrtmingn[iy,iz]=(pi^3.0*sec((pi*0.0)/2.0)^2.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*sqrt(4.0*l^4.0*m^2.0 + tan((pi*0.0)/2.0)^6.0 + tan((pi*ys[iy])/2.0)^6.0 - 8.0*l^2.0*m^2.0*tan((pi*zs[iz])/2.0)^2.0 + 4.0*m^2.0*tan((pi*zs[iz])/2.0)^4.0 + tan((pi*zs[iz])/2.0)^6.0 + 4.0*l^2.0*m*tan((pi*zs[iz])/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) - 4.0*m*tan((pi*zs[iz])/2.0)^4.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*ys[iy])/2.0)^4.0*(3.0*tan((pi*zs[iz])/2.0)^2.0 + 4.0*m*(m - sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))) + tan((pi*0.0)/2.0)^4.0*(3.0*tan((pi*ys[iy])/2.0)^2.0 + 3.0*tan((pi*zs[iz])/2.0)^2.0 + 4.0*m*(m - sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))) + tan((pi*ys[iy])/2.0)^2.0*(3.0*tan((pi*zs[iz])/2.0)^4.0 + 4.0*l^2.0*m*(-2.0*m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)) - 8.0*m*tan((pi*zs[iz])/2.0)^2.0*(-m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))) + tan((pi*0.0)/2.0)^2.0*(3.0*tan((pi*ys[iy])/2.0)^4.0 + 3.0*tan((pi*zs[iz])/2.0)^4.0 + 4.0*l^2.0*m*(-2.0*m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)) - 8.0*m*tan((pi*zs[iz])/2.0)^2.0*(-m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)) + tan((pi*ys[iy])/2.0)^2.0*(6.0*tan((pi*zs[iz])/2.0)^2.0 + 8.0*m*(m - sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))))))/(8.0*(2.0*l^2.0*m - 2.0*m*tan((pi*zs[iz])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*0.0)/2.0)^2.0*(-2.0*m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)) + tan((pi*ys[iy])/2.0)^2.0*(-2.0*m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))));
 
+            elseif spacetime=="Bardeen" #@Truong
+
+                # println("Using Bardeen metric")
+
+                #Metric components
+                gttn[iy,iz]=1.0/(-1.0 + (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                gxxn[iy,iz]=(4.0*cos((pi*0.0)/2.0)^4.0*((qBD^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)*sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*0.0)/2.0)^2.0*(-2.0*m + sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                gxyn[iy,iz]=(-2.0*m*sin(pi*0.0)*sin(pi*ys[iy]))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                gxzn[iy,iz]=(-2.0*m*sin(pi*0.0)*sin(pi*zs[iz]))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                gyyn[iy,iz]=(4.0*cos((pi*ys[iy])/2.0)^4.0*((qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)*sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*ys[iy])/2.0)^2.0*(-2.0*m + sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                gyzn[iy,iz]=(-2.0*m*sin(pi*ys[iy])*sin(pi*zs[iz]))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                gzzn[iy,iz]=(4.0*cos((pi*zs[iz])/2.0)^4.0*((qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0)*sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*zs[iz])/2.0)^2.0*(-2.0*m + sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
+
+                #Minus square root of the determinant of the metric
+                sqrtmingn[iy,iz]=(pi^3.0*sec((pi*0.0)/2.0)^2.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0)/8.0;
+                
             else
 
                 # println("Using NLMWP metric")

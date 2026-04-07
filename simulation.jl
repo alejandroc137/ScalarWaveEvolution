@@ -51,12 +51,12 @@ end
 
 parsed_args = parse_commandline()
 
-#Choices: NLMWP, Minkowski, Hayward
+#Choices: NLMWP, Minkowski, Hayward, or Bardeen
 spacetime=parsed_args["space"]; #@Truong
 
 #Throw an error message if an invalid spacetime is inputted @Truong
-if spacetime != "NLMWP" && spacetime != "Minkowski" && spacetime != "Hayward"
-    error("Invalid spacetime geometry! Options: NLMWP, Minkowski, Hayward")
+if spacetime != "NLMWP" && spacetime != "Minkowski" && spacetime != "Hayward" && spacetime != "Bardeen"
+    error("Invalid spacetime geometry! Options: NLMWP, Minkowski, Hayward, Bardeen")
 end
 
 ICtype="Analytical"
@@ -116,6 +116,12 @@ if spacetime=="Hayward"
     #These values allow for trapping, but the spacetime does not have a BH
     const l=0.15;
     const m=0.18;
+elseif spacetime=="Bardeen"
+    # println("Using Bardeen values")
+    #@Truong
+    #These values allow for trapping, but the spacetime does not have a BH
+    const m=0.32;
+    const qBD=0.25;
 elseif spacetime=="Minkowski"
     # println("Using NLMWP values")
     const a=1e8;
@@ -314,6 +320,9 @@ end
 if spacetime=="Hayward"
     # println("Saving Hayward arguments")
     write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
+elseif spacetime=="Bardeen"
+    # println("Saving Bardeen arguments")
+    write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n m=$(m)\n qBD=$(qBD) " )
 else
     # println("Saving NLMWP arguments")
     #Minkowski, NLMWP
