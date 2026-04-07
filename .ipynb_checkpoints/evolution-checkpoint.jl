@@ -25,9 +25,9 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
     
                 spatial!(phidot_M,phidotdy_M,phidotdz_M)
 
-                #Calculates the energy with potential f(r)=1-r^2/(a+br^4) and nonlinearity phi^3
-                #Comment/uncomment as needed
-                energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
+                # #Calculates the energy with potential f(r)=1-r^2/(a+br^4) and nonlinearity phi^3
+                # #Comment/uncomment as needed
+                # energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
 
                 fileData=location*"Wave_$(filename)_$(Am)_$(ts[t])_$(dy)_$(lambda)_$(epsKO).h5"
                 
@@ -43,15 +43,15 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 h5write(fileData, "phidot",phidot_Mn[:,:]) # @Truong
                 # h5write(fileData, "pidot",pidot_Mn[:,:]) # @Truong
 
-                #Stores energy
-                #Comment/uncomment as needed
-                h5write(fileData, "energy",energy)
+                # #Stores energy
+                # #Comment/uncomment as needed
+                # h5write(fileData, "energy",energy)
                
                 println("");
 
-                #Prints out energy
-                #Comment/uncomment as needed
-                println("Energy ",energy);
+                # #Prints out energy
+                # #Comment/uncomment as needed
+                # println("Energy ",energy);
                 
                 println("");
             end

@@ -100,21 +100,21 @@ filename=spacetime
 
 #For the metric potential
 if spacetime=="Minkowski"
-    # #for potential f(r)=1-2mr^2/(r^3+2l^2m)
-    # const l=1e-6;
-    # const m=1e-6;
+    #for potential f(r)=1-2mr^2/(r^3+2l^2m)
+    const l=1e-6;
+    const m=1e-6;
     
-    #for potential f(r)=1-r^2/(a+br^4)
-    const a=1e8;
-    const b=1e8;
+    # #for potential f(r)=1-r^2/(a+br^4)
+    # const a=1e8;
+    # const b=1e8;
 else
-    # #f(r)=1-2mr^2/(r^3+2l^2m)
-    # const l=0.18; #test values
-    # const m=0.2;
+    #f(r)=1-2mr^2/(r^3+2l^2m)
+    const l=0.18; #test values
+    const m=0.2;
     
-    # f(r)=1-r^2/(a+br^4)
-    const a=0.026;
-    const b=11.20;
+    # # f(r)=1-r^2/(a+br^4)
+    # const a=0.026;
+    # const b=11.20;
 end
 
 const dt=lambda*dy;
@@ -297,13 +297,13 @@ if isfile(fileInfo)
     println("Info File Overwritten")
 end
 
-# #for f(r)=1-2mr^2/(r^3+2l^2m)
-# #Comment/uncomment as needed
-# write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
-    
-#for f(r)=1-r^2/(a+br^4)
+#for f(r)=1-2mr^2/(r^3+2l^2m)
 #Comment/uncomment as needed
-write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
+write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
+    
+# #for f(r)=1-r^2/(a+br^4)
+# #Comment/uncomment as needed
+# write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
 
 println("Evolving the wave equation");
 @time simulation!(size(ts)[1],dtR,phi_M1,pi_M1,phi_M2,pi_M2,phidx_M,pidx_M,phidy_M,pidy_M,phidz_M,pidz_M,phidot_M,pidot_M,phidxdx_M,phidxdy_M,phidxdz_M,phidydy_M,phidydz_M,phidzdz_M)

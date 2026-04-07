@@ -40,24 +40,35 @@ function parse_commandline()
         "--amp"
             help = "Amplitude"
             arg_type = Float64
-            default = 4000.0 #Change amplitude here
+            default = 4000.0 #Default for cubic nonlinearity
+        "--space" #@Truong
+            help = "Spacetime geometry"
+            arg_type = String
+            default = "NLMWP"
     end
     return parse_args(s)
 end
 
 parsed_args = parse_commandline()
 
-spacetime="NLMWP" #Can change spacetime to "Minkowski"
+#Choices: NLMWP, Minkowski, Hayward
+spacetime=parsed_args["space"]; #@Truong
+
+#Throw an error message if an invalid spacetime is inputted @Truong
+if spacetime != "NLMWP" && spacetime != "Minkowski" && spacetime != "Hayward"
+    error("Invalid spacetime geometry! Options: NLMWP, Minkowski, Hayward")
+end
+
 ICtype="Analytical"
 
 orderFD=convert(Int64,4)
 
 
 #For the piecewise poly
-const Am=parsed_args["amp"];
+const Am=parsed_args["amp"]; #amplitude
 const r0=0.02;
 const r1=0.6;
-const ells=[1,2] #spherical harmonics, l modes
+const ells=[1,2] #Spherical harmonics, l modes
 const polylogexp=4.0
 
 # Resolution of the grids
@@ -99,20 +110,19 @@ location="Results/"
 filename=spacetime
 
 #For the metric potential
-if spacetime=="Minkowski"
-    # #for potential f(r)=1-2mr^2/(r^3+2l^2m)
-    # const l=1e-6;
-    # const m=1e-6;
-    
-    #for potential f(r)=1-r^2/(a+br^4)
+if spacetime=="Hayward"
+    # println("Using Hayward values")
+    #@Truong
+    #These values allow for trapping, but the spacetime does not have a BH
+    const l=0.15;
+    const m=0.18;
+elseif spacetime=="Minkowski"
+    # println("Using NLMWP values")
     const a=1e8;
     const b=1e8;
 else
-    # #f(r)=1-2mr^2/(r^3+2l^2m)
-    # const l=0.18; #test values
-    # const m=0.2;
-    
-    # f(r)=1-r^2/(a+br^4)
+    # println("Using NLMWP values")
+    #NLMWP
     const a=0.026;
     const b=11.20;
 end
@@ -134,7 +144,7 @@ const roundfact=1e8
 #Cadence to auxiliar quantites 
 const dtRaux=0.05;
 #Cadence to store the field and its time derivative
-const dtRaux2=0.1; #dt, can change this
+const dtRaux2=0.1; #dt (default is 0.1)
 
 const NtR=convert(Int64,round((Tf-Ti)/dtRaux));
 #Cadence to save the max vals
@@ -156,8 +166,9 @@ const phidydzmaxval=collect(range(Ti, Tf, length=Nt0+1));
 
 #Spherical Coordinates
 
-const phidthdthmaxval=collect(range(Ti, Tf, length=Nt0+1));
-const phidphidphimaxval=collect(range(Ti, Tf, length=Nt0+1));
+#Max values of second angular derivatives
+const phidthdthmaxval=collect(range(Ti, Tf, length=Nt0+1)); #theta
+const phidphidphimaxval=collect(range(Ti, Tf, length=Nt0+1)); #phi
 
 boundenerg=parsed_args["energb"];
 
@@ -204,7 +215,7 @@ const pik3_M= zeros(Float64, (Ny0,Nz0));
 const phik4_M= zeros(Float64, (Ny0,Nz0));
 const pik4_M= zeros(Float64, (Ny0,Nz0));
 
-#Contravariant
+#Contravariant metric components
 const gtt=zeros(Float64, (Ny0,Nz0));
 
 const gxx=zeros(Float64, (Ny0,Nz0));
@@ -216,7 +227,7 @@ const gyz=zeros(Float64, (Ny0,Nz0));
 
 const gzz=zeros(Float64, (Ny0,Nz0));
 
-#Derivatives
+#Derivatives of metric components
 
 const gtt_dx=zeros(Float64, (Ny0,Nz0));
 const gtt_dy=zeros(Float64, (Ny0,Nz0));
@@ -245,6 +256,8 @@ const gyz_dz=zeros(Float64, (Ny0,Nz0));
 const gzz_dx=zeros(Float64, (Ny0,Nz0));
 const gzz_dy=zeros(Float64, (Ny0,Nz0));
 const gzz_dz=zeros(Float64, (Ny0,Nz0));
+
+#Minus square root of the determinant of the metric
 
 const sqrtming=zeros(Float64, (Ny0,Nz0));
 
@@ -297,13 +310,15 @@ if isfile(fileInfo)
     println("Info File Overwritten")
 end
 
-# #for f(r)=1-2mr^2/(r^3+2l^2m)
-# #Comment/uncomment as needed
-# write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
-    
-#for f(r)=1-r^2/(a+br^4)
-#Comment/uncomment as needed
-write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
+#@Truong
+if spacetime=="Hayward"
+    # println("Saving Hayward arguments")
+    write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
+else
+    # println("Saving NLMWP arguments")
+    #Minkowski, NLMWP
+    write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
+end
 
 println("Evolving the wave equation");
 @time simulation!(size(ts)[1],dtR,phi_M1,pi_M1,phi_M2,pi_M2,phidx_M,pidx_M,phidy_M,pidy_M,phidz_M,pidz_M,phidot_M,pidot_M,phidxdx_M,phidxdy_M,phidxdz_M,phidydy_M,phidydz_M,phidzdz_M)
