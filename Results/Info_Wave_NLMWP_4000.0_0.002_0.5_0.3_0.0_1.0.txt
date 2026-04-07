@@ -1,9 +1,0 @@
- Simulation params 
-
- Am=4000.0 
- r0=0.02
- r1=0.6
- ells=[1, 2]
- polylogexp=4.0
- a=0.026
- b=11.2 
