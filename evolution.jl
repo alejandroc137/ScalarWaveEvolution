@@ -28,7 +28,7 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 # #Calculates the energy with NLMWP potential and cubic nonlinearity
                 # energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
 
-                fileData=location*"Wave_"*case_name*".h5" #@Truong
+                fileData=location*"Wave_"*case_name*"_$(ts[t]).h5" #@Truong
                 
                 if isfile(fileData)
                     rm(fileData)

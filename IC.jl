@@ -105,7 +105,7 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
         println("\n================================")
         println("Using ICs from file snapshot at time $(Ti)")
         println("================================\n")
-        fid = h5open(location*"Wave_"*case_name*".h5"); #@Truong
+        fid = h5open(location*"Wave_"*case_name*"_$(Ti).h5"); #@Truong
         phi_M1n[:,:]=read(fid["phi"]);
         pi_M1n[:,:]=read(fid["pi"]);
     end

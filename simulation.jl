@@ -53,6 +53,14 @@ function parse_commandline()
             help = "Inclusion of quasilinear term in time derivative nonlinearity"
             arg_type = Float64
             default = 0.0 #0.0=does not include quasi term, 1.0=includes it
+        "--courant" #@Truong
+            help = "Courant factor"
+            arg_type = Float64
+            default = 0.5
+        "--dt" #@Truong
+            help = "Increments to store the field"
+            arg_type = Float64
+            default = 0.1
     end
     return parse_args(s)
 end
@@ -110,8 +118,8 @@ const dy=parsed_args["res"];
 const dz=parsed_args["res"];
 
 # Courant factor: dt/dx
-const lambda = 0.5;
-# Kreiss--Oliger dissipation
+const lambda = parsed_args["courant"]; #@Truong
+# Kreiss-Oliger dissipation
 const epsKO=0.3;
 # Initial Time
 const Ti= parsed_args["ti"];
@@ -131,7 +139,7 @@ println("Spacetime\t=\t", spacetime)
 println("Wave equation\t=\t", waveeqn)
 println("Quasilinear\t=\t", quasi)
 println("Courant factor\t=\t", lambda)
-println("Kreiss--Oliger\t=\t", epsKO)
+println("Kreiss-Oliger\t=\t", epsKO)
 println("================================\n")
 
 ymin       =  0.0;
@@ -141,8 +149,8 @@ zmin       =  -1.0;
 zmax       =  1.0;
 
 # Define the folder name
-case_name = "$(spacetime)_$(waveeqn)_$(Am)_$(dy)_$(lambda)_$(epsKO)_$(Ti)_$(Tf)" #@Truong
-folder_name = "Results_"*case_name #@Truong
+case_name = "$(spacetime)_$(waveeqn)_$(Am)_$(dy)_$(lambda)_$(epsKO)" #@Truong
+folder_name = "Results_"*case_name*"_$(Ti)_$(Tf)" #@Truong
 
 # Check if the folder exists
 if !isdir(folder_name)
@@ -160,8 +168,6 @@ if spacetime=="Hayward" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const l=0.15;
     const m=0.18;
-    # const l=0.161; #slightly less trapping
-    # const m=0.1875;
     println("Using Hayward metric values: l = $(l), m = $(m)\n")
 elseif spacetime=="Bardeen" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
@@ -196,7 +202,7 @@ const roundfact=1e8
 #Cadence to auxiliar quantites 
 const dtRaux=0.05;
 #Cadence to store the field and its time derivative
-const dtRaux2=0.1; #dt (default is 0.1)
+const dtRaux2=parsed_args["dt"]; #@Truong
 
 const NtR=convert(Int64,round((Tf-Ti)/dtRaux));
 #Cadence to save the max vals
@@ -346,8 +352,8 @@ metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,
 # h5write(location*"MetricXDerivatives_"*case_name*".h5", "gzz_dx",gzz_dx[:,:,:])
 # h5write(location*"MetricXDerivatives_"*case_name*".h5", "sqrtming_dx",sqrtming_dx[:,:,:])
 
-fileInfo=location*"Info_Wave_"*case_name*".txt" #@Truong
-fileMax=location*"Max_Wave_"*case_name*".h5" #@Truong
+fileInfo=location*"Info_Wave_"*case_name*"_$(Ti)_$(Tf).txt" #@Truong
+fileMax=location*"Max_Wave_"*case_name*"_$(Ti)_$(Tf).h5" #@Truong
 
 if isfile(fileInfo)
     rm(fileInfo)
