@@ -118,40 +118,33 @@ zmin       =  -1.0;
 zmax       =  1.0;
 
 # Define the folder name
-folder_name = "Results"
+case_name = "$(spacetime)_$(waveeqn)_$(Am)_$(dy)_$(lambda)_$(epsKO)_$(Ti)_$(Tf)" #@Truong
+folder_name = "Results_"*case_name #@Truong
 
 # Check if the folder exists
 if !isdir(folder_name)
     # Create the folder if it doesn't exist
     mkdir(folder_name)
-    println("Folder 'Results' created.")
+    println("Folder '"*folder_name*"' created.") #@Truong
 else
-    println("Folder 'Results' already exists.")
+    println("Folder '"*folder_name*"' already exists.") #@Truong
 end
 
-location="Results/" 
-
-filename=spacetime
+location=folder_name*"/" #@Truong 
 
 #For the metric potential
-if spacetime=="Hayward"
-    # println("Using Hayward values")
-    #@Truong
+if spacetime=="Hayward" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const l=0.15;
     const m=0.18;
-elseif spacetime=="Bardeen"
-    # println("Using Bardeen values")
-    #@Truong
+elseif spacetime=="Bardeen" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const m=0.32;
     const qBD=0.25;
 elseif spacetime=="Minkowski"
-    # println("Using NLMWP values")
     const a=1e8;
     const b=1e8;
 else
-    # println("Using NLMWP values")
     #NLMWP
     const a=0.026;
     const b=11.20;
@@ -307,33 +300,27 @@ println("Computing the metric derivatives");
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
 # #Stores metric components to check if needed
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gtt",gtt[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gxx",gxx[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gxy",gxy[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gxz",gxz[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gyy",gyy[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gyz",gyz[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "gzz",gzz[:,:,:])
-# h5write(location*"Metric_$(filename)_$(dy).h5", "sqrtming",sqrtming[:,:,:])
-
-# #Check if any metric components are NaN
-# println(any(isnan.(gtt)),any(isnan.(gxx)),any(isnan.(gxy)),any(isnan.(gxz)),any(isnan.(gyy)),any(isnan.(gyz)),any(isnan.(gzz)),any(isnan.(sqrtming)))
+# h5write(location*"Metric_"*case_name*".h5", "gtt",gtt[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gxx",gxx[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gxy",gxy[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gxz",gxz[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gyy",gyy[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gyz",gyz[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gzz",gzz[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "sqrtming",sqrtming[:,:,:])
 
 # #Stores first derivatives wrt x of metric components to check if needed
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gtt_dx",gtt_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gxx_dx",gxx_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gxy_dx",gxy_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gxz_dx",gxz_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gyy_dx",gyy_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gyz_dx",gyz_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "gzz_dx",gzz_dx[:,:,:])
-# h5write(location*"MetricDerivatives_$(filename)_$(dy).h5", "sqrtming_dx",sqrtming_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gtt_dx",gtt_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxx_dx",gxx_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxy_dx",gxy_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxz_dx",gxz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyy_dx",gyy_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyz_dx",gyz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gzz_dx",gzz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "sqrtming_dx",sqrtming_dx[:,:,:])
 
-# #Check if any metric x first derivatives are NaN
-# println(any(isnan.(gtt_dx)),any(isnan.(gxx_dx)),any(isnan.(gxy_dx)),any(isnan.(gxz_dx)),any(isnan.(gyy_dx)),any(isnan.(gyz_dx)),any(isnan.(gzz_dx)),any(isnan.(sqrtming_dx)))
-
-fileInfo=location*"Info_Wave_$(filename)_$(Am)_$(dy)_$(lambda)_$(epsKO)_$(Ti)_$(Tf).txt"
-fileMax=location*"Max_Wave_$(filename)_$(Am)_$(dy)_$(lambda)_$(epsKO)_$(Ti)_$(Tf).h5"
+fileInfo=location*"Info_Wave_"*case_name*".txt" #@Truong
+fileMax=location*"Max_Wave_"*case_name*".h5" #@Truong
 
 if isfile(fileInfo)
     rm(fileInfo)
@@ -342,13 +329,10 @@ end
 
 #@Truong
 if spacetime=="Hayward"
-    # println("Saving Hayward arguments")
     write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
 elseif spacetime=="Bardeen"
-    # println("Saving Bardeen arguments")
     write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n m=$(m)\n qBD=$(qBD) " )
 else
-    # println("Saving NLMWP arguments")
     #Minkowski, NLMWP
     write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
 end

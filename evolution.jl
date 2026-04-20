@@ -25,11 +25,10 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
     
                 spatial!(phidot_M,phidotdy_M,phidotdz_M)
 
-                # #Calculates the energy with potential f(r)=1-r^2/(a+br^4) and nonlinearity phi^3
-                # #Comment/uncomment as needed
+                # #Calculates the energy with NLMWP potential and cubic nonlinearity
                 # energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
 
-                fileData=location*"Wave_$(filename)_$(Am)_$(ts[t])_$(dy)_$(lambda)_$(epsKO).h5"
+                fileData=location*"Wave_"*case_name*".h5" #@Truong
                 
                 if isfile(fileData)
                     rm(fileData)
@@ -43,14 +42,12 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 h5write(fileData, "phidot",phidot_Mn[:,:]) # @Truong
                 # h5write(fileData, "pidot",pidot_Mn[:,:]) # @Truong
 
-                # #Stores energy
-                # #Comment/uncomment as needed
+                # #Stores energy with NLMWP potential and cubic nonlinearity
                 # h5write(fileData, "energy",energy)
                
                 println("");
 
-                # #Prints out energy
-                # #Comment/uncomment as needed
+                # #Prints out energy with NLMWP potential and cubic nonlinearity
                 # println("Energy ",energy);
                 
                 println("");

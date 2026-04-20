@@ -224,19 +224,15 @@ function RHS_Eq!(phi_Mn,pi_Mn,phidx_Mn,pidx_Mn,phidy_Mn,pidy_Mn,phidz_Mn,pidz_Mn
 
             #Linear Wave Equation
             if waveeqn=="Linear"
-                # println("Using linear wave equation")
                 pidot_Mn[iy,iz]=(gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
 
             #Time Derivative Non-Linear Wave Equation @Truong
-            #If using this nonlinearity (with NLMWP metric), set the amp=430.0
+            #if space=NLMWP, wave=TimeDerivs, and res=0.002, then amp=430.0
             elseif waveeqn=="TimeDerivs"
-                # println("Using timederivs wave equation")
-                # println(quasi)
                 pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]* (((-pi_Mn[iy,iz]/gtt[iy,iz])^2.0*phi_Mn[iy,iz] + phi_Mn[iy,iz]^2.0*(-pidot_Mn[iy,iz]/gtt[iy,iz])) - 2.0*quasi*phi_Mn[iy,iz]))    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
             
             #Cubic Non-Linear Wave Equation (Eq. 24: phi_Mn[iy,iz]^3.0)
             else
-                # println("Using cubic wave equation")
                 pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]*phi_Mn[iy,iz]^3.0)    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
             end
             
