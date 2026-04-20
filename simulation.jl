@@ -40,23 +40,35 @@ function parse_commandline()
         "--amp"
             help = "Amplitude"
             arg_type = Float64
-            default = 4000.0 #Default for cubic nonlinearity
+            default = 4000.0 #Default for NLMWP, cubic nonlinearity
         "--space" #@Truong
             help = "Spacetime geometry"
             arg_type = String
             default = "NLMWP"
+        "--wave" #@Truong
+            help = "Wave equation"
+            arg_type = String
+            default = "Cubic" #cubic: phi^3
     end
     return parse_args(s)
 end
 
 parsed_args = parse_commandline()
 
-#Choices: NLMWP, Minkowski, Hayward, or Bardeen
-spacetime=parsed_args["space"]; #@Truong
+#Spacetime choices: NLMWP, Minkowski, Hayward, or Bardeen @Truong
+spacetime=parsed_args["space"];
 
 #Throw an error message if an invalid spacetime is inputted @Truong
 if spacetime != "NLMWP" && spacetime != "Minkowski" && spacetime != "Hayward" && spacetime != "Bardeen"
     error("Invalid spacetime geometry! Options: NLMWP, Minkowski, Hayward, Bardeen")
+end
+
+#Wave equation choices: Linear, Cubic (phi^3), TimeDerivs @Truong
+waveeqn=parsed_args["wave"];
+
+#Throw an error message if an invalid wave equation is inputted @Truong
+if waveeqn != "Linear" && waveeqn != "Cubic" && waveeqn != "TimeDerivs"
+    error("Invalid wave equation! Options: Linear, Cubic, TimeDerivs")
 end
 
 ICtype="Analytical"
