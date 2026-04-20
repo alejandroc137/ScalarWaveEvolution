@@ -75,6 +75,16 @@ if waveeqn != "Linear" && waveeqn != "Cubic" && waveeqn != "TimeDerivs"
     error("Invalid wave equation! Options: Linear, Cubic, TimeDerivs")
 end
 
+cubic=0.0;
+timederivs=0.0;
+
+if waveeqn == "Cubic"
+    cubic=1.0;
+end
+if waveeqn == "TimeDerivs"
+    timederivs=1.0;
+end
+
 #Quasilinear term choices: 0.0 or 1.0
 quasi=parsed_args["quasi"]; #@Truong
 

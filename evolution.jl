@@ -256,7 +256,7 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
 
         #If the field diverges
         if any(x->x>1e4, phi_Mn1)
-            println("No bueno! ")
+            println("No bueno!")
             break;
         end
 

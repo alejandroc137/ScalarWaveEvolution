@@ -103,7 +103,7 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
 
     elseif (Ti!=0.0) 
         println("Using ICs from file snapshot at time $(Ti)")
-        fid = h5open(location*"4DWave_$(filename)_$(Am)_$(Ti)_$(dy)_$(lambda)_$(epsKO).h5");
+        fid = h5open(location*"Wave_"*case_name*".h5"); #@Truong
         phi_M1n[:,:]=read(fid["phi"]);
         pi_M1n[:,:]=read(fid["pi"]);
     end
