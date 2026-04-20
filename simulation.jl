@@ -160,19 +160,23 @@ if spacetime=="Hayward" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const l=0.15;
     const m=0.18;
-    # const l=0.18; #less trapping
-    # const m=0.2;
+    # const l=0.161; #slightly less trapping
+    # const m=0.1875;
+    println("Using Hayward metric values: l = $(l), m = $(m)\n")
 elseif spacetime=="Bardeen" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const m=0.32;
     const qBD=0.25;
+    println("Using Bardeen metric values: m = $(m), qBD = $(qBD)\n")
 elseif spacetime=="Minkowski"
     const a=1e8;
     const b=1e8;
+    println("Using Minkowski metric\n")
 else
     #NLMWP
     const a=0.026;
     const b=11.20;
+    println("Using NLMWP metric values: a = $(a), b = $(b)\n")
 end
 
 const dt=lambda*dy;
