@@ -90,10 +90,10 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
         end
     end
     if ((Ti==0.0) & (ICtype!="File")) 
-        println("======================")
+        println("\n================================")
         println("Using new IC with Polylog conditions")
         println("Exponent $(polylogexp) and ells $(ells)")
-        println("======================")
+        println("================================\n")
         @inbounds Threads.@threads for iy=1:Ny0
             @inbounds for iz=1:Nz0
                     #Polylog with exponent given by polylogexp and ells for the spherical
@@ -102,7 +102,9 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
         end
 
     elseif (Ti!=0.0) 
+        println("\n================================")
         println("Using ICs from file snapshot at time $(Ti)")
+        println("================================\n")
         fid = h5open(location*"Wave_"*case_name*".h5"); #@Truong
         phi_M1n[:,:]=read(fid["phi"]);
         pi_M1n[:,:]=read(fid["pi"]);

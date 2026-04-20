@@ -118,8 +118,21 @@ const Ti= parsed_args["ti"];
 # Final Time
 const Tf= parsed_args["tf"];
 
-println("Initial time  ", Ti)
-println("Final time  ", Tf)
+boundenerg=parsed_args["energb"];
+
+#@Truong
+println("\n================================")
+println("Grid resolution\t=\t", dy)
+println("Initial time\t=\t", Ti)
+println("Final time\t=\t", Tf)
+println("Energy bound\t=\t", boundenerg)
+println("Amplitude\t=\t", Am)
+println("Spacetime\t=\t", spacetime)
+println("Wave equation\t=\t", waveeqn)
+println("Quasilinear\t=\t", quasi)
+println("Courant factor\t=\t", lambda)
+println("Kreiss--Oliger\t=\t", epsKO)
+println("================================\n")
 
 ymin       =  0.0;
 ymax       =  1.0;
@@ -135,9 +148,9 @@ folder_name = "Results_"*case_name #@Truong
 if !isdir(folder_name)
     # Create the folder if it doesn't exist
     mkdir(folder_name)
-    println("Folder '"*folder_name*"' created.") #@Truong
+    println("Folder '"*folder_name*"' created.\n") #@Truong
 else
-    println("Folder '"*folder_name*"' already exists.") #@Truong
+    println("Folder '"*folder_name*"' already exists.\n") #@Truong
 end
 
 location=folder_name*"/" #@Truong 
@@ -147,6 +160,8 @@ if spacetime=="Hayward" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const l=0.15;
     const m=0.18;
+    # const l=0.18; #less trapping
+    # const m=0.2;
 elseif spacetime=="Bardeen" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
     const m=0.32;
@@ -202,8 +217,6 @@ const phidydzmaxval=collect(range(Ti, Tf, length=Nt0+1));
 #Max values of second angular derivatives
 const phidthdthmaxval=collect(range(Ti, Tf, length=Nt0+1)); #theta
 const phidphidphimaxval=collect(range(Ti, Tf, length=Nt0+1)); #phi
-
-boundenerg=parsed_args["energb"];
 
 yvaltest=findall(x -> x == boundenerg, ys)[1];
 
