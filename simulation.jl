@@ -49,6 +49,10 @@ function parse_commandline()
             help = "Wave equation"
             arg_type = String
             default = "Cubic" #cubic: phi^3
+        "--quasi" #@Truong
+            help = "Inclusion of quasilinear term in time derivative nonlinearity"
+            arg_type = Float64
+            default = 0.0 #0.0=does not include quasi term, 1.0=includes it
     end
     return parse_args(s)
 end
@@ -69,6 +73,14 @@ waveeqn=parsed_args["wave"];
 #Throw an error message if an invalid wave equation is inputted @Truong
 if waveeqn != "Linear" && waveeqn != "Cubic" && waveeqn != "TimeDerivs"
     error("Invalid wave equation! Options: Linear, Cubic, TimeDerivs")
+end
+
+#Quasilinear term choices: 0.0 or 1.0
+quasi=parsed_args["quasi"]; #@Truong
+
+#Throw an error message if input is not 0.0 or 1.0
+if quasi != 0.0 && quasi != 1.0
+    error("Invalid quasilinear term! Options: 0.0 or 1.0")
 end
 
 ICtype="Analytical"
