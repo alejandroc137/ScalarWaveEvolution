@@ -43,12 +43,12 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 # h5write(fileData, "pidot",pidot_Mn[:,:]) # @Truong
 
                 # #Stores energy with NLMWP potential and cubic nonlinearity
-                # h5write(fileData, "energy",energy)
+                # h5write(fileData, "energy", energy)
                
                 println("");
 
                 # #Prints out energy with NLMWP potential and cubic nonlinearity
-                # println("Energy ",energy);
+                # println("Energy ", energy);
                 
                 println("");
             end
@@ -58,9 +58,9 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 println("File Maxs Overwritten")
             end
             
-            h5write(fileMax, "ts",ts[:])
-            h5write(fileMax, "pidotmaxs",pidotmaxval[:])
-            h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:])
+            h5write(fileMax, "ts",ts[:]) # time
+            h5write(fileMax, "pidotmaxs",pidotmaxval[:]) # max of first time deriv of pi
+            h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:]) # max of second angular deriv of phi
 
             aux+=1;
             
@@ -255,6 +255,7 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
         end
 
         #If the field diverges
+        #for @Truong: where does the field diverge?
         if any(x->x>1e4, phi_Mn1)
             println("No bueno!")
             break;

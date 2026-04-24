@@ -57,7 +57,7 @@ function parse_commandline()
             help = "Courant factor"
             arg_type = Float64
             default = 0.5
-        "--dt" #@Truong
+        "--snapdt" #@Truong
             help = "Increments to store the field"
             arg_type = Float64
             default = 0.1
@@ -108,7 +108,7 @@ orderFD=convert(Int64,4)
 
 #For the piecewise poly
 const Am=parsed_args["amp"]; #amplitude
-const r0=0.02;
+const r0=0.02; #for @Truong: need to change r0 and r1 initial conditions for Hayward metric
 const r1=0.6;
 const ells=[1,2] #Spherical harmonics, l modes
 const polylogexp=4.0
@@ -130,18 +130,19 @@ boundenerg=parsed_args["energb"];
 
 #@Truong
 println("\n================================")
-println("Grid resolution\t=\t", dy)
-println("Initial time\t=\t", Ti)
-println("Final time\t=\t", Tf)
-println("Energy bound\t=\t", boundenerg)
-println("Amplitude\t=\t", Am)
 println("Spacetime\t=\t", spacetime)
 println("Wave equation\t=\t", waveeqn)
-println("Quasilinear\t=\t", quasi)
+println("Amplitude\t=\t", Am)
+println("Grid resolution\t=\t", dy)
 println("Courant factor\t=\t", lambda)
 println("Kreiss-Oliger\t=\t", epsKO)
+println("Initial time\t=\t", Ti)
+println("Final time\t=\t", Tf)
+println("Quasilinear\t=\t", quasi)
+println("Energy bound\t=\t", boundenerg)
 println("================================\n")
 
+#Spatial limits in compactified coordinates
 ymin       =  0.0;
 ymax       =  1.0;
 
@@ -195,14 +196,14 @@ println("Allocating memory for the matrices of size $Ny0 x $Nz0");
 
 const Nt0= convert(Int64,round((Tf-Ti)/dt));
 
-const ts=collect(range(Ti, Tf, length=Nt0+1));
+const ts=collect(range(Ti, Tf, length=Nt0+1)); #timesteps to evolve
 
 const roundfact=1e8
 
-#Cadence to auxiliar quantites 
+#Cadence to auxiliar quantites (energy)
 const dtRaux=0.05;
-#Cadence to store the field and its time derivative
-const dtRaux2=parsed_args["dt"]; #@Truong
+#Cadence to store the field and its time derivative (to save a snapshot)
+const dtRaux2=parsed_args["snapdt"]; #@Truong
 
 const NtR=convert(Int64,round((Tf-Ti)/dtRaux));
 #Cadence to save the max vals
@@ -211,6 +212,8 @@ const dtR=round(dtRaux*roundfact);
 const dtRFS=round(dtRaux2*roundfact);
 
 const ts_aux=round.(roundfact*ts);
+
+#Initializations
 
 const ys=collect(range(ymin, ymax, length=Ny0));
 const zs=collect(range(zmin, zmax, length=Nz0));
@@ -333,24 +336,24 @@ println("Computing the metric derivatives");
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
 # #Stores metric components to check if needed
-# h5write(location*"Metric_"*case_name*".h5", "gtt",gtt[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "gxx",gxx[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "gxy",gxy[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "gxz",gxz[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "gyy",gyy[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "gyz",gyz[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "gzz",gzz[:,:,:])
-# h5write(location*"Metric_"*case_name*".h5", "sqrtming",sqrtming[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gtt",gtt[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxx",gxx[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxy",gxy[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxz",gxz[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyy",gyy[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyz",gyz[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gzz",gzz[:,:,:])
+# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming",sqrtming[:,:,:])
 
 # #Stores first derivatives wrt x of metric components to check if needed
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gtt_dx",gtt_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxx_dx",gxx_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxy_dx",gxy_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxz_dx",gxz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyy_dx",gyy_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyz_dx",gyz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gzz_dx",gzz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*".h5", "sqrtming_dx",sqrtming_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gtt_dx",gtt_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxx_dx",gxx_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxy_dx",gxy_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxz_dx",gxz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyy_dx",gyy_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyz_dx",gyz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gzz_dx",gzz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming_dx",sqrtming_dx[:,:,:])
 
 fileInfo=location*"Info_Wave_"*case_name*"_$(Ti)_$(Tf).txt" #@Truong
 fileMax=location*"Max_Wave_"*case_name*"_$(Ti)_$(Tf).h5" #@Truong
@@ -360,14 +363,77 @@ if isfile(fileInfo)
     println("Info File Overwritten")
 end
 
-#@Truong
+#Save simulation parameters in Info_Wave file @Truong
 if spacetime=="Hayward"
-    write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n l=$(l)\n m=$(m) " )
+    write(fileInfo, 
+"Simulation parameters
+================================
+Spacetime = $(spacetime)
+Wave equation = $(waveeqn)
+Amplitude = $(Am)
+Grid resolution = $(dy)
+Courant factor = $(lambda)
+Kreiss-Oliger = $(epsKO)
+Initial time = $(Ti)
+Final time = $(Tf)
+Quasilinear = $(quasi)
+Energy bound = $(boundenerg)
+r0 = $(r0)
+r1 = $(r1)
+ells = $(ells)
+polylogexp = $(polylogexp)
+\n$(spacetime) metric values:
+l = $(l)
+m = $(m)
+================================\n"
+    )
 elseif spacetime=="Bardeen"
-    write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n m=$(m)\n qBD=$(qBD) " )
+    write(fileInfo, 
+"Simulation parameters
+================================
+Spacetime = $(spacetime)
+Wave equation = $(waveeqn)
+Amplitude = $(Am)
+Grid resolution = $(dy)
+Courant factor = $(lambda)
+Kreiss-Oliger = $(epsKO)
+Initial time = $(Ti)
+Final time = $(Tf)
+Quasilinear = $(quasi)
+Energy bound = $(boundenerg)
+r0 = $(r0)
+r1 = $(r1)
+ells = $(ells)
+polylogexp = $(polylogexp)
+\n$(spacetime) metric values:
+m = $(m)
+qBD = $(qBD)
+================================\n"
+    )
 else
     #Minkowski, NLMWP
-    write(fileInfo," Simulation params \n\n Am=$(Am) \n r0=$(r0)\n r1=$(r1)\n ells=$(ells)\n polylogexp=$(polylogexp)\n a=$(a)\n b=$(b) " )
+    write(fileInfo, 
+"Simulation parameters
+================================
+Spacetime = $(spacetime)
+Wave equation = $(waveeqn)
+Amplitude = $(Am)
+Grid resolution = $(dy)
+Courant factor = $(lambda)
+Kreiss-Oliger = $(epsKO)
+Initial time = $(Ti)
+Final time = $(Tf)
+Quasilinear = $(quasi)
+Energy bound = $(boundenerg)
+r0 = $(r0)
+r1 = $(r1)
+ells = $(ells)
+polylogexp = $(polylogexp)
+\n$(spacetime) metric values:
+a = $(a)
+b = $(b)
+================================\n"
+    )
 end
 
 println("Evolving the wave equation");
@@ -377,6 +443,6 @@ if isfile(fileMax)
     rm(fileMax)
     println("File Maxs Overwritten")
 end
-h5write(fileMax, "ts",ts[:])
-h5write(fileMax, "pidotmaxs",pidotmaxval[:])
-h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:])
+h5write(fileMax, "ts",ts[:]) # time
+h5write(fileMax, "pidotmaxs",pidotmaxval[:]) # max of first time deriv of pi
+h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:]) # max of second angular deriv of phi
