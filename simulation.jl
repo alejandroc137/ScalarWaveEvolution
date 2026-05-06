@@ -75,7 +75,7 @@ if spacetime != "NLMWP" && spacetime != "Minkowski" && spacetime != "Hayward" &&
     error("Invalid spacetime geometry! Options: NLMWP, Minkowski, Hayward, Bardeen")
 end
 
-#Wave equation choices: Linear, Cubic (phi^3), TimeDerivs @Truong
+#Wave equation choices: Linear, Cubic (phi^3), or TimeDerivs @Truong
 waveeqn=parsed_args["wave"];
 
 #Throw an error message if an invalid wave equation is inputted @Truong
@@ -108,8 +108,14 @@ orderFD=convert(Int64,4)
 
 #For the piecewise poly
 const Am=parsed_args["amp"]; #amplitude
-const r0=0.02; #for @Truong: need to change r0 and r1 initial conditions for Hayward metric
-const r1=0.6;
+
+const r0=0.02;
+if spacetime=="Hayward" #@Truong
+    const r1=0.66; #This is optimized for Hayward values l=0.18, m=0.20
+else
+    const r1=0.6;
+end
+
 const ells=[1,2] #Spherical harmonics, l modes
 const polylogexp=4.0
 
@@ -167,8 +173,12 @@ location=folder_name*"/" #@Truong
 #For the metric potential
 if spacetime=="Hayward" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
-    const l=0.15;
-    const m=0.18;
+    # #l/m=0.833
+    # const l=0.15;
+    # const m=0.18;
+    #l/m=0.9
+    const l=0.18;
+    const m=0.20;
     println("Using Hayward metric values: l = $(l), m = $(m)\n")
 elseif spacetime=="Bardeen" #@Truong
     #These values allow for trapping, but the spacetime does not have a BH
