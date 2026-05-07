@@ -25,7 +25,7 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
     
                 spatial!(phidot_M,phidotdy_M,phidotdz_M)
 
-                #Calculates the energy with NLMWP potential and cubic nonlinearity
+                #Calculate the energy
                 energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
 
                 fileData=location*"Wave_"*case_name*"_$(ts[t]).h5" #@Truong
@@ -42,12 +42,12 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 h5write(fileData, "phidot",phidot_Mn[:,:]) # @Truong
                 # h5write(fileData, "pidot",pidot_Mn[:,:]) # @Truong
 
-                #Stores energy with NLMWP potential and cubic nonlinearity
+                #Store energy
                 h5write(fileData, "energy", energy)
                
                 println("");
 
-                #Prints out energy with NLMWP potential and cubic nonlinearity
+                #Print out energy
                 println("Energy ", energy);
                 
                 println("");

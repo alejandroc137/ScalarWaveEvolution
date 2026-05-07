@@ -281,29 +281,47 @@ function spatial!(f,dyf,dzf)
 end
 
 #Functions to calculate energy
-#Linear
-function energyC(Qdx,Qdy,Qdz,Qdot)
-    nrg=0.0;
-    @inbounds for iy=2:(Ny0-1)
-        @inbounds for iz=2:(Nz0-1)
 
-                fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
-                
-                nrg+=fact*((gzz[iy,iz]*Qdz[iy,iz]^2.0 + 2.0*gyz[iy,iz]*Qdz[iy,iz]*Qdy[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]^2.0 + 2.0*(gxz[iy,iz]*phidz_M[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0)/(2.0.*sqrt(-gtt[iy,iz])))             
-        end
-    end
-    return nrg
-end
-
-#Nonlinear
+#@Truong
+#Q=Phi (the field)
 function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
     nrg=0.0;
     @inbounds for iy=2:yvaltest
         @inbounds for iz=zvaltest1:zvaltest2
-                fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
+
+                # 1/sqrt[f(r)], where f(r)=metric function, and the Jacobian
+                fact=dy*dz * (nlmwp*(1.0/sqrt(1.0 - (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))) + hayward*(1.0/sqrt(1.0 - (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5)))) * (pi^3.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*tan((pi*ys[iy])/2.0))/2.0
                 
-                nrg+=fact*((2.0*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0))/(2.0.*(1.0 + 3.0)*sqrt(-gtt[iy,iz])))          
+                nrg+=fact*(2.0*cubic*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0 + Q[iy,iz]^2.0*(-2.0*quasi + timederivs*Qdot[iy,iz]^2.0)))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz]))
+            
         end
     end
     return nrg
 end
+
+# #Linear
+# function energyC(Qdx,Qdy,Qdz,Qdot)
+#     nrg=0.0;
+#     @inbounds for iy=2:(Ny0-1)
+#         @inbounds for iz=2:(Nz0-1)
+
+#                 fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
+                
+#                 nrg+=fact*((gzz[iy,iz]*Qdz[iy,iz]^2.0 + 2.0*gyz[iy,iz]*Qdz[iy,iz]*Qdy[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]^2.0 + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0)/(2.0.*sqrt(-gtt[iy,iz])))             
+#         end
+#     end
+#     return nrg
+# end
+
+# #Nonlinear
+# function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
+#     nrg=0.0;
+#     @inbounds for iy=2:yvaltest
+#         @inbounds for iz=zvaltest1:zvaltest2
+#                 fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
+                
+#                 nrg+=fact*((2.0*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0))/(2.0.*(1.0 + 3.0)*sqrt(-gtt[iy,iz])))          
+#         end
+#     end
+#     return nrg
+# end

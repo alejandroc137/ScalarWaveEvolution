@@ -75,6 +75,16 @@ if spacetime != "NLMWP" && spacetime != "Minkowski" && spacetime != "Hayward" &&
     error("Invalid spacetime geometry! Options: NLMWP, Minkowski, Hayward, Bardeen")
 end
 
+nlmwp=0.0;
+hayward=0.0;
+
+if spacetime == "NLMWP"
+    nlmwp=1.0;
+end
+if spacetime == "Hayward"
+    hayward=1.0;
+end
+
 #Wave equation choices: Linear, Cubic (phi^3), or TimeDerivs @Truong
 waveeqn=parsed_args["wave"];
 
@@ -171,30 +181,42 @@ end
 location=folder_name*"/" #@Truong 
 
 #For the metric potential
-if spacetime=="Hayward" #@Truong
-    #These values allow for trapping, but the spacetime does not have a BH
-    # #l/m=0.833
-    # const l=0.15;
-    # const m=0.18;
-    #l/m=0.9
-    const l=0.18;
-    const m=0.20;
-    println("Using Hayward metric values: l = $(l), m = $(m)\n")
-elseif spacetime=="Bardeen" #@Truong
-    #These values allow for trapping, but the spacetime does not have a BH
-    const m=0.32;
-    const qBD=0.25;
-    println("Using Bardeen metric values: m = $(m), qBD = $(qBD)\n")
-elseif spacetime=="Minkowski"
+const l=0.18; #Hayward
+const m=0.20;
+
+const a=0.026; #NLMWP
+const b=11.20;
+
+if spacetime=="Minkowski"
     const a=1e8;
     const b=1e8;
     println("Using Minkowski metric\n")
-else
-    #NLMWP
-    const a=0.026;
-    const b=11.20;
-    println("Using NLMWP metric values: a = $(a), b = $(b)\n")
 end
+
+# if spacetime=="Hayward" #@Truong
+#     #These values allow for trapping, but the spacetime does not have a BH
+#     # #l/m=0.833
+#     # const l=0.15;
+#     # const m=0.18;
+#     #l/m=0.9
+#     const l=0.18;
+#     const m=0.20;
+#     println("Using Hayward metric values: l = $(l), m = $(m)\n")
+# elseif spacetime=="Bardeen" #@Truong
+#     #These values allow for trapping, but the spacetime does not have a BH
+#     const m=0.32;
+#     const qBD=0.25;
+#     println("Using Bardeen metric values: m = $(m), qBD = $(qBD)\n")
+# elseif spacetime=="Minkowski"
+#     const a=1e8;
+#     const b=1e8;
+#     println("Using Minkowski metric\n")
+# else
+#     #NLMWP
+#     const a=0.026;
+#     const b=11.20;
+#     println("Using NLMWP metric values: a = $(a), b = $(b)\n")
+# end
 
 const dt=lambda*dy;
 
