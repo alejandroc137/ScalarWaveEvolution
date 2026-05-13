@@ -125,8 +125,7 @@ const Am=parsed_args["amp"]; #amplitude
 
 const r0=0.02;
 if spacetime=="Hayward" #@Truong
-    const r1=0.62; #This is optimized for Hayward values l=0.175, m=0.20, l/m=0.875
-    # const r1=0.66; #This is optimized for Hayward values l=0.18, m=0.20, l/m=0.9
+    const r1=0.66; #This is optimized for Hayward values l=0.18, m=0.20, l/m=0.9
 else
     const r1=0.6;
 end
@@ -191,10 +190,8 @@ location=folder_name*"/" #@Truong
 #These values allow for trapping, but the spacetime does not have a BH
 # const l=0.15; #l/m=0.833
 # const m=0.18;
-const l=0.175; #l/m=0.875
+const l=0.18; #l/m=0.9
 const m=0.20;
-# const l=0.18; #l/m=0.9
-# const m=0.20;
 
 #Bardeen
 #These values allow for trapping, but the spacetime does not have a BH
@@ -262,10 +259,14 @@ const phidydzmaxval=collect(range(Ti, Tf, length=Nt0+1));
 const phidthdthmaxval=collect(range(Ti, Tf, length=Nt0+1)); #theta
 const phidphidphimaxval=collect(range(Ti, Tf, length=Nt0+1)); #phi
 
-yvaltest=findall(x -> x == boundenerg, ys)[1];
+#From ChatGPT:
+yvaltest = round(Int, (boundenerg - ymin)/dy) + 1;
+zvaltest1 = round(Int, (-boundenerg - zmin)/dz) + 1;
+zvaltest2 = round(Int, ( boundenerg - zmin)/dz) + 1;
 
-zvaltest1=findall(x -> x == -boundenerg, zs)[1];
-zvaltest2=findall(x -> x == boundenerg, zs)[1];
+# yvaltest=findall(x -> x == boundenerg, ys)[1];
+# zvaltest1=findall(x -> x == -boundenerg, zs)[1];
+# zvaltest2=findall(x -> x == boundenerg, zs)[1];
 
 const tsR=collect(range(Ti, Tf, length=NtR+1));
 
