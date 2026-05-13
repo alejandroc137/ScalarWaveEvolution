@@ -292,7 +292,7 @@ function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
                 # 1/sqrt[f(r)], where f(r)=metric function, and the Jacobian
                 fact=dy*dz * (nlmwp*(1.0/sqrt(1.0 - (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))) + hayward*(1.0/sqrt(1.0 - (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) + bardeen*(1.0/sqrt(1.0 - (2.0*mBD*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) * (pi^3.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*tan((pi*ys[iy])/2.0))/2.0
                 
-                nrg+=fact*(2.0*cubic*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0 + Q[iy,iz]^2.0*(-2.0*quasi + timederivs*Qdot[iy,iz]^2.0)))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz]))
+                nrg+=fact*(2.0*cubic*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0 + Q[iy,iz]^2.0*timederivs*(-2.0*quasi + Qdot[iy,iz]^2.0)))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz]))
             
         end
     end

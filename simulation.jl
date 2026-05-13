@@ -125,7 +125,8 @@ const Am=parsed_args["amp"]; #amplitude
 
 const r0=0.02;
 if spacetime=="Hayward" #@Truong
-    const r1=0.66; #This is optimized for Hayward values l=0.18, m=0.20
+    const r1=0.62; #This is optimized for Hayward values l=0.175, m=0.20, l/m=0.875
+    # const r1=0.66; #This is optimized for Hayward values l=0.18, m=0.20, l/m=0.9
 else
     const r1=0.6;
 end
@@ -190,8 +191,10 @@ location=folder_name*"/" #@Truong
 #These values allow for trapping, but the spacetime does not have a BH
 # const l=0.15; #l/m=0.833
 # const m=0.18;
-const l=0.18; #l/m=0.9
+const l=0.175; #l/m=0.875
 const m=0.20;
+# const l=0.18; #l/m=0.9
+# const m=0.20;
 
 #Bardeen
 #These values allow for trapping, but the spacetime does not have a BH
@@ -356,32 +359,32 @@ phidotdy_M=zeros(Float64, (Ny0,Nz0))
 phidotdz_M=zeros(Float64, (Ny0,Nz0))
 
 println("Evaluating the metric and the initial conditions");
-
 ICs!(phi_M1,pi_M1,gtt,gxx,gxy,gxz,gyy,gyz,gzz,sqrtming)
 
 println("Computing the metric derivatives");
-
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
-# #Stores metric components to check if needed
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gtt",gtt[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxx",gxx[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxy",gxy[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxz",gxz[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyy",gyy[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyz",gyz[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gzz",gzz[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming",sqrtming[:,:,:])
+#Stores metric components to check if needed
+println("Saving metric components")
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gtt",gtt[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxx",gxx[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxy",gxy[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxz",gxz[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyy",gyy[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyz",gyz[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gzz",gzz[:,:,:])
+h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming",sqrtming[:,:,:])
 
-# #Stores first derivatives wrt x of metric components to check if needed
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gtt_dx",gtt_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxx_dx",gxx_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxy_dx",gxy_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxz_dx",gxz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyy_dx",gyy_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyz_dx",gyz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gzz_dx",gzz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming_dx",sqrtming_dx[:,:,:])
+#Stores first derivatives wrt x of metric components to check if needed
+println("Saving first derivatives wrt x of metric components")
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gtt_dx",gtt_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxx_dx",gxx_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxy_dx",gxy_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxz_dx",gxz_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyy_dx",gyy_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyz_dx",gyz_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gzz_dx",gzz_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming_dx",sqrtming_dx[:,:,:])
 
 fileInfo=location*"Info_Wave_"*case_name*"_$(Ti)_$(Tf).txt" #@Truong
 fileMax=location*"Max_Wave_"*case_name*"_$(Ti)_$(Tf).h5" #@Truong
