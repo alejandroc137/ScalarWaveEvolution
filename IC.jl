@@ -11,6 +11,7 @@ function arg(y,z)
     end
 end
 
+#Function to generate initial data (Eqs. 27, 28 in Benomio)
 function Phival(z,y)
     phivalue=0
     if r0<=sqrt(tan((pi*y)/2.0)^2.0 + tan((pi*z)/2.0)^2.0)<=r1
@@ -27,7 +28,7 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
 
             if spacetime=="Hayward" #@Truong
                 
-                #Metric components
+                #Contravariant metric components
                 gttn[iy,iz]=-((2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5)/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)*(-2.0*m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))));
 
                 gxxn[iy,iz]=(4.0*cos((pi*0.0)/2.0)^4.0*(2.0*l^2.0*m + tan((pi*ys[iy])/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*zs[iz])/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*0.0)/2.0)^2.0*(-2.0*m + sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))))/(pi^2.0*(2.0*l^2.0*m + tan((pi*0.0)/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*ys[iy])/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*zs[iz])/2.0)^2.0*sqrt(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)));
@@ -47,7 +48,7 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
 
             elseif spacetime=="Bardeen" #@Truong
 
-                #Metric components
+                #Contravariant metric components
                 gttn[iy,iz]=1.0/(-1.0 + (2.0*mBD*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
 
                 gxxn[iy,iz]=(4.0*cos((pi*0.0)/2.0)^4.0*((qBD^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)*sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0) + tan((pi*0.0)/2.0)^2.0*(-2.0*mBD + sqrt(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))))/(pi^2.0*(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5);
@@ -68,7 +69,7 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
             else
 
                 #Minkowski, NLMWP
-                #Metric components
+                #Contravariant metric components
                 gttn[iy,iz]=-((a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0)/(a + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)*(-1.0 + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))));
 
                 gxxn[iy,iz]=(4.0*cos((pi*0.0)/2.0)^4.0*(a + b*tan((pi*0.0)/2.0)^4.0 + b*tan((pi*ys[iy])/2.0)^4.0 + 2.0*b*tan((pi*ys[iy])/2.0)^2.0*tan((pi*zs[iz])/2.0)^2.0 + b*tan((pi*zs[iz])/2.0)^4.0 + tan((pi*0.0)/2.0)^2.0*(-1.0 + 2.0*b*tan((pi*ys[iy])/2.0)^2.0 + 2.0*b*tan((pi*zs[iz])/2.0)^2.0)))/(pi^2.0*(a + b*tan((pi*0.0)/2.0)^4.0 + b*tan((pi*ys[iy])/2.0)^4.0 + 2.0*b*tan((pi*ys[iy])/2.0)^2.0*tan((pi*zs[iz])/2.0)^2.0 + b*tan((pi*zs[iz])/2.0)^4.0 + 2.0*b*tan((pi*0.0)/2.0)^2.0*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)));
@@ -89,6 +90,8 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
             end
         end
     end
+
+    #Generate new initial data
     if ((Ti==0.0) & (ICtype!="File")) 
         println("\n================================")
         println("Using new IC with Polylog conditions")
@@ -101,6 +104,7 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
             end
         end
 
+    #Continue a previous evolution
     elseif (Ti!=0.0) 
         println("\n================================")
         println("Using ICs from file snapshot at time $(Ti)")

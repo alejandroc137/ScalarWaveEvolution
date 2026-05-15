@@ -9,7 +9,7 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
 
     for t in 1:steps
 
-        #Compute the RHS
+        #Compute the RHS (Eqs. 23, 24 in Benomio)
         RHS_Eq!(phi_Mn1,pi_Mn1,phidx_Mn,pidx_Mn,phidy_Mn,pidy_Mn,phidz_Mn,pidz_Mn,phidot_Mn,pidot_Mn,phidxdx_Mn,phidxdy_Mn,phidxdz_Mn,phidydy_Mn,phidydz_Mn,phidzdz_Mn)
 
         #Save snapshot

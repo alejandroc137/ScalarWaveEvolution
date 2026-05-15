@@ -223,6 +223,7 @@ function RHS_Eq!(phi_Mn,pi_Mn,phidx_Mn,pidx_Mn,phidy_Mn,pidy_Mn,phidz_Mn,pidz_Mn
             phidot_Mn[iy,iz]=-pi_Mn[iy,iz]/gtt[iy,iz];
 
             #Eq. 24
+            #cubic, timederivs, and quasi control which nonlinearities are "turned on"
             pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]*(cubic*phi_Mn[iy,iz]^3.0 + timederivs*(((-pi_Mn[iy,iz]/gtt[iy,iz])^2.0*phi_Mn[iy,iz] + phi_Mn[iy,iz]^2.0*(-pidot_Mn[iy,iz]/gtt[iy,iz])) - 2.0*quasi*phi_Mn[iy,iz])))    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]
 
             # #Linear Wave Equation
@@ -289,10 +290,14 @@ function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
     @inbounds for iy=2:yvaltest
         @inbounds for iz=zvaltest1:zvaltest2
 
-                # 1/sqrt[f(r)], where f(r)=metric function, and the Jacobian
+                # fact = dy*dz* 1/sqrt[f(r)] * 2pi * (pi/2)^2 * tan(pi*y/2) * sec(pi*y/2)^2 * sec(pi*z/2)^2
+                # where f(r) = metric function
+                # nlmwp, hayward, and bardeen control which f(r) to use
                 fact=dy*dz * (nlmwp*(1.0/sqrt(1.0 - (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))) + hayward*(1.0/sqrt(1.0 - (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) + bardeen*(1.0/sqrt(1.0 - (2.0*mBD*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) * (pi^3.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*tan((pi*ys[iy])/2.0))/2.0
-                
-                nrg+=fact*(2.0*cubic*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0 + Q[iy,iz]^2.0*timederivs*(-2.0*quasi + Qdot[iy,iz]^2.0)))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz]))
+
+                # energy = factor * GB
+                # where GB = (T_{\mu\nu} X^\mu) n^\nu
+                nrg+=fact*(2.0*cubic*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0 + timederivs*Q[iy,iz]^2.0*(-2.0*quasi + Qdot[iy,iz]^2.0)))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz]))
             
         end
     end
@@ -307,7 +312,7 @@ end
 
 #                 fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
                 
-#                 nrg+=fact*((gzz[iy,iz]*Qdz[iy,iz]^2.0 + 2.0*gyz[iy,iz]*Qdz[iy,iz]*Qdy[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]^2.0 + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0)/(2.0.*sqrt(-gtt[iy,iz])))             
+#                 nrg+=fact*((gzz[iy,iz]*Qdz[iy,iz]^2.0 + 2.0*gyz[iy,iz]*Qdz[iy,iz]*Qdy[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]^2.0 + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0)/(2.0*sqrt(-gtt[iy,iz])))             
 #         end
 #     end
 #     return nrg
@@ -320,7 +325,7 @@ end
 #         @inbounds for iz=zvaltest1:zvaltest2
 #                 fact=dy*dz*1.0/sqrt(1.0 - (tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))*(2.0*pi*tan(pi/2.0*ys[iy]))*(pi^2.0/4.0*sec(pi*ys[iy]/2.0)^2.0*sec(pi*zs[iz]/2.0)^2.0)
                 
-#                 nrg+=fact*((2.0*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0))/(2.0.*(1.0 + 3.0)*sqrt(-gtt[iy,iz])))          
+#                 nrg+=fact*((2.0*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz])))          
 #         end
 #     end
 #     return nrg
