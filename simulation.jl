@@ -173,7 +173,7 @@ zmax       =  1.0;
 
 # Define the folder name
 case_name = "$(spacetime)_$(waveeqn)_$(Am)_$(dy)_$(lambda)_$(epsKO)" #@Truong
-folder_name = "Results_"*case_name*"_$(Ti)_$(Tf)" #@Truong
+folder_name = "Results_"*case_name #@Truong
 
 # Check if the folder exists
 if !isdir(folder_name)
@@ -366,30 +366,30 @@ ICs!(phi_M1,pi_M1,gtt,gxx,gxy,gxz,gyy,gyz,gzz,sqrtming)
 println("Computing the metric derivatives");
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
-# #Stores metric components to check if needed
-# println("Saving metric components")
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gtt",gtt[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxx",gxx[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxy",gxy[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gxz",gxz[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyy",gyy[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gyz",gyz[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "gzz",gzz[:,:,:])
-# h5write(location*"Metric_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming",sqrtming[:,:,:])
+#Stores metric components to check if needed
+println("Saving metric components")
+h5write(location*"Metric_"*case_name*".h5", "gtt",gtt[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "gxx",gxx[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "gxy",gxy[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "gxz",gxz[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "gyy",gyy[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "gyz",gyz[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "gzz",gzz[:,:,:])
+h5write(location*"Metric_"*case_name*".h5", "sqrtming",sqrtming[:,:,:])
 
-# #Stores first derivatives wrt x of metric components to check if needed
-# println("Saving first derivatives wrt x of metric components")
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gtt_dx",gtt_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxx_dx",gxx_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxy_dx",gxy_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gxz_dx",gxz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyy_dx",gyy_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gyz_dx",gyz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "gzz_dx",gzz_dx[:,:,:])
-# h5write(location*"MetricXDerivatives_"*case_name*"_$(Ti)_$(Tf).h5", "sqrtming_dx",sqrtming_dx[:,:,:])
+#Stores first derivatives wrt x of metric components to check if needed
+println("Saving first derivatives wrt x of metric components")
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gtt_dx",gtt_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxx_dx",gxx_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxy_dx",gxy_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxz_dx",gxz_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyy_dx",gyy_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyz_dx",gyz_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "gzz_dx",gzz_dx[:,:,:])
+h5write(location*"MetricXDerivatives_"*case_name*".h5", "sqrtming_dx",sqrtming_dx[:,:,:])
 
-fileInfo=location*"Info_Wave_"*case_name*"_$(Ti)_$(Tf).txt" #@Truong
-fileMax=location*"Max_Wave_"*case_name*"_$(Ti)_$(Tf).h5" #@Truong
+fileInfo=location*"Info_Wave_"*case_name*".txt" #@Truong
+fileMax=location*"Max_Wave_"*case_name*"_$(Ti).h5" #@Truong
 
 if isfile(fileInfo)
     rm(fileInfo)
@@ -407,8 +407,6 @@ Amplitude = $(Am)
 Grid resolution = $(dy)
 Courant factor = $(lambda)
 Kreiss-Oliger = $(epsKO)
-Initial time = $(Ti)
-Final time = $(Tf)
 Quasilinear = $(quasi)
 Energy bound = $(boundenerg)
 r0 = $(r0)
@@ -430,8 +428,6 @@ Amplitude = $(Am)
 Grid resolution = $(dy)
 Courant factor = $(lambda)
 Kreiss-Oliger = $(epsKO)
-Initial time = $(Ti)
-Final time = $(Tf)
 Quasilinear = $(quasi)
 Energy bound = $(boundenerg)
 r0 = $(r0)
@@ -454,8 +450,6 @@ Amplitude = $(Am)
 Grid resolution = $(dy)
 Courant factor = $(lambda)
 Kreiss-Oliger = $(epsKO)
-Initial time = $(Ti)
-Final time = $(Tf)
 Quasilinear = $(quasi)
 Energy bound = $(boundenerg)
 r0 = $(r0)
