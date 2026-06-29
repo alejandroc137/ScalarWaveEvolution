@@ -36,12 +36,28 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 end
                 
                 #These two are mandatory to store! Used to continue an evolution
-                h5write(fileData, "phi",phi_Mn1[:,:])
-                h5write(fileData, "pi",pi_Mn1[:,:])
-                
-                h5write(fileData, "phidot",phidot_Mn[:,:]) # @Truong
-                # h5write(fileData, "pidot",pidot_Mn[:,:]) # @Truong
+                h5write(fileData, "phi", phi_Mn1[:,:])
+                h5write(fileData, "pi", pi_Mn1[:,:])
 
+                # @Truong
+                # first derivatives
+                h5write(fileData, "phidot", phidot_Mn[:,:])
+                h5write(fileData, "pidot", pidot_Mn[:,:])
+                h5write(fileData, "phidx", phidx_Mn[:,:])
+                h5write(fileData, "pidx", pidx_Mn[:,:])
+                h5write(fileData, "phidy", phidy_Mn[:,:])
+                h5write(fileData, "pidy", pidy_Mn[:,:])
+                h5write(fileData, "phidz", phidz_Mn[:,:])
+                h5write(fileData, "pidz", pidz_Mn[:,:])
+
+                # second derivatives
+                h5write(fileData, "phidxdx", phidxdx_Mn[:,:])
+                h5write(fileData, "phidxdy", phidxdy_Mn[:,:])
+                h5write(fileData, "phidxdz", phidxdz_Mn[:,:])
+                h5write(fileData, "phidydy", phidydy_Mn[:,:])
+                h5write(fileData, "phidydz", phidydz_Mn[:,:])
+                h5write(fileData, "phidzdz", phidzdz_Mn[:,:])
+            
                 #Store energy
                 h5write(fileData, "energy", energy)
                
@@ -255,10 +271,27 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
         end
 
         #If the field diverges
-        #for @Truong: where does the field diverge?
-        # if any(x->x>1e4, phi_Mn1)
-        if any(x->x>1e8, phi_Mn1)
+        if any(x->x>1e4, phi_Mn1)
             println("No bueno!")
+
+            if isfile(location*"nobueno.txt")
+                rm(location*"nobueno.txt")
+            end
+
+            io = open(location*"nobueno.txt", "a")
+            println(io, "Field diverges at timestep $t, t=$(ts[t])")
+            close(io)
+
+            for iy=1:Ny0
+                for iz=1:Nz0
+                    if phi_Mn1[iy,iz] > 1e4
+                        io = open(location*"nobueno.txt", "a")
+                        println(io, "(iy=$iy, iz=$iz), (y=$(ys[iy]), z=$(zs[iz]))")
+                        close(io)
+                    end
+                end
+            end
+            
             break;
         end
 

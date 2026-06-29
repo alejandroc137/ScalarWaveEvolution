@@ -57,6 +57,10 @@ function parse_commandline()
             help = "Courant factor"
             arg_type = Float64
             default = 0.5
+        "--diss" #@Truong
+            help = "Kreiss-Oliger dissipation"
+            arg_type = Float64
+            default = 0.3
         "--snapdt" #@Truong
             help = "Increments to store the field"
             arg_type = Float64
@@ -140,7 +144,7 @@ const dz=parsed_args["res"];
 # Courant factor: dt/dx
 const lambda = parsed_args["courant"]; #@Truong
 # Kreiss-Oliger dissipation
-const epsKO=0.3;
+const epsKO = parsed_args["diss"]; #@Truong
 # Initial Time
 const Ti= parsed_args["ti"];
 # Final Time
@@ -245,8 +249,8 @@ const ts_aux=round.(roundfact*ts);
 
 #Initializations
 
-const ys=collect(range(ymin, ymax, length=Ny0));
-const zs=collect(range(zmin, zmax, length=Nz0));
+const ys=collect(range(ymin, ymax, length=Ny0)); #0.0 to 1.0
+const zs=collect(range(zmin, zmax, length=Nz0)); #-1.0 to 1.0
 
 const pidotmaxval=collect(range(Ti, Tf, length=Nt0+1));
 
@@ -367,6 +371,9 @@ println("Computing the metric derivatives");
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
 #Stores metric components to check if needed
+if isfile(location*"Metric_"*case_name*".h5")
+    rm(location*"Metric_"*case_name*".h5")
+end
 println("Saving metric components")
 h5write(location*"Metric_"*case_name*".h5", "gtt",gtt[:,:,:])
 h5write(location*"Metric_"*case_name*".h5", "gxx",gxx[:,:,:])
@@ -378,6 +385,9 @@ h5write(location*"Metric_"*case_name*".h5", "gzz",gzz[:,:,:])
 h5write(location*"Metric_"*case_name*".h5", "sqrtming",sqrtming[:,:,:])
 
 #Stores first derivatives wrt x of metric components to check if needed
+if isfile(location*"MetricXDerivatives_"*case_name*".h5")
+    rm(location*"MetricXDerivatives_"*case_name*".h5")
+end
 println("Saving first derivatives wrt x of metric components")
 h5write(location*"MetricXDerivatives_"*case_name*".h5", "gtt_dx",gtt_dx[:,:,:])
 h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxx_dx",gxx_dx[:,:,:])
