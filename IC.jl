@@ -112,5 +112,11 @@ function ICs!(phi_M1n,pi_M1n,gttn,gxxn,gxyn,gxzn,gyyn,gyzn,gzzn,sqrtmingn)
         fid = h5open(location*"Wave_"*case_name*"_$(Ti).h5"); #@Truong
         phi_M1n[:,:]=read(fid["phi"]);
         pi_M1n[:,:]=read(fid["pi"]);
+
+        #Continuations preserve the accumulated flux
+        if haskey(fid, "cumulative_energy_flux")
+            cumulativeenergyfluxval[1]=read(fid["cumulative_energy_flux"])
+        end
+        close(fid)
     end
 end;

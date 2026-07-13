@@ -12,6 +12,13 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
         #Compute the RHS (Eqs. 23, 24 in Benomio)
         RHS_Eq!(phi_Mn1,pi_Mn1,phidx_Mn,pidx_Mn,phidy_Mn,pidy_Mn,phidz_Mn,pidz_Mn,phidot_Mn,pidot_Mn,phidxdx_Mn,phidxdy_Mn,phidxdz_Mn,phidydy_Mn,phidydz_Mn,phidzdz_Mn)
 
+        # Outward Killing-energy flux through the boundary of the energy region.
+        # The trapezoidal time integral is evaluated at the full evolution cadence.
+        energyfluxval[t]=energyFluxNLC(phidx_Mn,phidy_Mn,phidz_Mn,phidot_Mn)
+        if t>1
+            cumulativeenergyfluxval[t]=cumulativeenergyfluxval[t-1] + 0.5*dt*(energyfluxval[t-1]+energyfluxval[t])
+        end
+        
         #Save snapshot
         if (ts_aux[t]%dtR)==0
 
@@ -39,27 +46,29 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 h5write(fileData, "phi", phi_Mn1[:,:])
                 h5write(fileData, "pi", pi_Mn1[:,:])
 
-                # @Truong
-                # first derivatives (testing no bueno condition)
-                h5write(fileData, "phidot", phidot_Mn[:,:])
-                h5write(fileData, "pidot", pidot_Mn[:,:])
-                h5write(fileData, "phidx", phidx_Mn[:,:])
-                h5write(fileData, "pidx", pidx_Mn[:,:])
-                h5write(fileData, "phidy", phidy_Mn[:,:])
-                h5write(fileData, "pidy", pidy_Mn[:,:])
-                h5write(fileData, "phidz", phidz_Mn[:,:])
-                h5write(fileData, "pidz", pidz_Mn[:,:])
+                # # @Truong
+                # # first derivatives (testing no bueno condition)
+                # h5write(fileData, "phidot", phidot_Mn[:,:])
+                # h5write(fileData, "pidot", pidot_Mn[:,:])
+                # h5write(fileData, "phidx", phidx_Mn[:,:])
+                # h5write(fileData, "pidx", pidx_Mn[:,:])
+                # h5write(fileData, "phidy", phidy_Mn[:,:])
+                # h5write(fileData, "pidy", pidy_Mn[:,:])
+                # h5write(fileData, "phidz", phidz_Mn[:,:])
+                # h5write(fileData, "pidz", pidz_Mn[:,:])
 
-                # second derivatives (testing no bueno condition)
-                h5write(fileData, "phidxdx", phidxdx_Mn[:,:])
-                h5write(fileData, "phidxdy", phidxdy_Mn[:,:])
-                h5write(fileData, "phidxdz", phidxdz_Mn[:,:])
-                h5write(fileData, "phidydy", phidydy_Mn[:,:])
-                h5write(fileData, "phidydz", phidydz_Mn[:,:])
-                h5write(fileData, "phidzdz", phidzdz_Mn[:,:])
+                # # second derivatives (testing no bueno condition)
+                # h5write(fileData, "phidxdx", phidxdx_Mn[:,:])
+                # h5write(fileData, "phidxdy", phidxdy_Mn[:,:])
+                # h5write(fileData, "phidxdz", phidxdz_Mn[:,:])
+                # h5write(fileData, "phidydy", phidydy_Mn[:,:])
+                # h5write(fileData, "phidydz", phidydz_Mn[:,:])
+                # h5write(fileData, "phidzdz", phidzdz_Mn[:,:])
             
                 #Store energy
                 h5write(fileData, "energy", energy)
+                h5write(fileData, "energy_flux", energyfluxval[t])
+                h5write(fileData, "cumulative_energy_flux", cumulativeenergyfluxval[t])
                
                 println("");
 
@@ -77,6 +86,8 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
             h5write(fileMax, "ts",ts[:]) # time
             h5write(fileMax, "pidotmaxs",pidotmaxval[:]) # max of first time deriv of pi
             h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:]) # max of second angular deriv of phi
+            h5write(fileMax, "energy_flux",energyfluxval[:])
+            h5write(fileMax, "cumulative_energy_flux",cumulativeenergyfluxval[:])
 
             aux+=1;
             
@@ -292,36 +303,36 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 end
             end
 
-            fileData=location*"Wave_"*case_name*"_$(ts[t]).h5"
+            # fileData=location*"Wave_"*case_name*"_$(ts[t]).h5"
             
-            if isfile(fileData)
-                rm(fileData)
-            end
+            # if isfile(fileData)
+            #     rm(fileData)
+            # end
             
-            h5write(fileData, "phi", phi_Mn1[:,:])
-            h5write(fileData, "pi", pi_Mn1[:,:])
+            # h5write(fileData, "phi", phi_Mn1[:,:])
+            # h5write(fileData, "pi", pi_Mn1[:,:])
 
-            # first derivatives
-            h5write(fileData, "phidot", phidot_Mn[:,:])
-            h5write(fileData, "pidot", pidot_Mn[:,:])
-            h5write(fileData, "phidx", phidx_Mn[:,:])
-            h5write(fileData, "pidx", pidx_Mn[:,:])
-            h5write(fileData, "phidy", phidy_Mn[:,:])
-            h5write(fileData, "pidy", pidy_Mn[:,:])
-            h5write(fileData, "phidz", phidz_Mn[:,:])
-            h5write(fileData, "pidz", pidz_Mn[:,:])
+            # # first derivatives
+            # h5write(fileData, "phidot", phidot_Mn[:,:])
+            # h5write(fileData, "pidot", pidot_Mn[:,:])
+            # h5write(fileData, "phidx", phidx_Mn[:,:])
+            # h5write(fileData, "pidx", pidx_Mn[:,:])
+            # h5write(fileData, "phidy", phidy_Mn[:,:])
+            # h5write(fileData, "pidy", pidy_Mn[:,:])
+            # h5write(fileData, "phidz", phidz_Mn[:,:])
+            # h5write(fileData, "pidz", pidz_Mn[:,:])
 
-            # second derivatives
-            h5write(fileData, "phidxdx", phidxdx_Mn[:,:])
-            h5write(fileData, "phidxdy", phidxdy_Mn[:,:])
-            h5write(fileData, "phidxdz", phidxdz_Mn[:,:])
-            h5write(fileData, "phidydy", phidydy_Mn[:,:])
-            h5write(fileData, "phidydz", phidydz_Mn[:,:])
-            h5write(fileData, "phidzdz", phidzdz_Mn[:,:])
+            # # second derivatives
+            # h5write(fileData, "phidxdx", phidxdx_Mn[:,:])
+            # h5write(fileData, "phidxdy", phidxdy_Mn[:,:])
+            # h5write(fileData, "phidxdz", phidxdz_Mn[:,:])
+            # h5write(fileData, "phidydy", phidydy_Mn[:,:])
+            # h5write(fileData, "phidydz", phidydz_Mn[:,:])
+            # h5write(fileData, "phidzdz", phidzdz_Mn[:,:])
         
-            # energy
-            energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
-            h5write(fileData, "energy", energy)
+            # # energy
+            # energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
+            # h5write(fileData, "energy", energy)
             
             break;
         end

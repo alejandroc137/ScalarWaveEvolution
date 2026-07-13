@@ -307,6 +307,43 @@ function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
     return nrg
 end
 
+# Outward flux of the Killing energy through the boundary of the reduced
+# cylindrical region 0 <= y <= boundenerg, -boundenerg <= z <= boundenerg.
+# In compactified cylindrical coordinates, sqrt(-g) = rho*J_y*J_z and
+# J^a_E = -T^a_t = -g^{ab} (partial_b phi) (partial_t phi).
+function energyFluxNLC(Qdx,Qdy,Qdz,Qdot)
+    flux=0.0
+
+    # Cylindrical side y = boundenerg (the y=0 face has zero area).
+    iy=yvaltest
+    rho=tan(pi*ys[iy]/2.0)
+    Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
+    @inbounds for iz=zvaltest1:zvaltest2
+        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+        surface_factor=2.0*pi*rho*Jy*Jz*dz
+        flux-=surface_factor*Qdot[iy,iz]*(gxy[iy,iz]*Qdx[iy,iz] + gyy[iy,iz]*Qdy[iy,iz] + gyz[iy,iz]*Qdz[iy,iz])
+    end
+
+    # Upper and lower caps z = +/- boundenerg. The lower outward normal
+    # reverses the sign of the coordinate-z current.
+    @inbounds for iy=2:yvaltest
+        rho=tan(pi*ys[iy]/2.0)
+        Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
+
+        iz=zvaltest2
+        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+        surface_factor=2.0*pi*rho*Jy*Jz*dy
+        flux-=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+
+        iz=zvaltest1
+        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+        surface_factor=2.0*pi*rho*Jy*Jz*dy
+        flux+=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+    end
+
+    return flux
+end
+
 # #Linear
 # function energyC(Qdx,Qdy,Qdz,Qdot)
 #     nrg=0.0;

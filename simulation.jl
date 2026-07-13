@@ -275,6 +275,10 @@ zvaltest2 = round(Int, ( boundenerg - zmin)/dz) + 1;
 
 const tsR=collect(range(Ti, Tf, length=NtR+1));
 
+# Instantaneous outward Killing-energy flux and its time integral at every RK step.
+const energyfluxval=zeros(Float64, Nt0+1)
+const cumulativeenergyfluxval=zeros(Float64, Nt0+1)
+
 const phi_M1= zeros(Float64, (Ny0,Nz0));
 const phi_M2= zeros(Float64, (Ny0,Nz0));
 
@@ -370,33 +374,33 @@ ICs!(phi_M1,pi_M1,gtt,gxx,gxy,gxz,gyy,gyz,gzz,sqrtming)
 println("Computing the metric derivatives");
 metricderivatives!(gtt_dx,gxx_dx,gxy_dx,gxz_dx,gyy_dx,gyz_dx,gzz_dx,sqrtming_dx,gtt_dy,gxx_dy,gxy_dy,gxz_dy,gyy_dy,gyz_dy,gzz_dy,sqrtming_dy,gtt_dz,gxx_dz,gxy_dz,gxz_dz,gyy_dz,gyz_dz,gzz_dz,sqrtming_dz)
 
-#Stores metric components to check if needed
-if isfile(location*"Metric_"*case_name*".h5")
-    rm(location*"Metric_"*case_name*".h5")
-end
-println("Saving metric components")
-h5write(location*"Metric_"*case_name*".h5", "gtt",gtt[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "gxx",gxx[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "gxy",gxy[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "gxz",gxz[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "gyy",gyy[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "gyz",gyz[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "gzz",gzz[:,:,:])
-h5write(location*"Metric_"*case_name*".h5", "sqrtming",sqrtming[:,:,:])
+# #Stores metric components to check if needed
+# if isfile(location*"Metric_"*case_name*".h5")
+#     rm(location*"Metric_"*case_name*".h5")
+# end
+# println("Saving metric components")
+# h5write(location*"Metric_"*case_name*".h5", "gtt",gtt[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gxx",gxx[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gxy",gxy[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gxz",gxz[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gyy",gyy[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gyz",gyz[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "gzz",gzz[:,:,:])
+# h5write(location*"Metric_"*case_name*".h5", "sqrtming",sqrtming[:,:,:])
 
-#Stores first derivatives wrt x of metric components to check if needed
-if isfile(location*"MetricXDerivatives_"*case_name*".h5")
-    rm(location*"MetricXDerivatives_"*case_name*".h5")
-end
-println("Saving first derivatives wrt x of metric components")
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gtt_dx",gtt_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxx_dx",gxx_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxy_dx",gxy_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxz_dx",gxz_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyy_dx",gyy_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyz_dx",gyz_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "gzz_dx",gzz_dx[:,:,:])
-h5write(location*"MetricXDerivatives_"*case_name*".h5", "sqrtming_dx",sqrtming_dx[:,:,:])
+# #Stores first derivatives wrt x of metric components to check if needed
+# if isfile(location*"MetricXDerivatives_"*case_name*".h5")
+#     rm(location*"MetricXDerivatives_"*case_name*".h5")
+# end
+# println("Saving first derivatives wrt x of metric components")
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gtt_dx",gtt_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxx_dx",gxx_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxy_dx",gxy_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gxz_dx",gxz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyy_dx",gyy_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gyz_dx",gyz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "gzz_dx",gzz_dx[:,:,:])
+# h5write(location*"MetricXDerivatives_"*case_name*".h5", "sqrtming_dx",sqrtming_dx[:,:,:])
 
 fileInfo=location*"Info_Wave_"*case_name*".txt" #@Truong
 fileMax=location*"Max_Wave_"*case_name*"_$(Ti).h5" #@Truong
@@ -483,3 +487,6 @@ end
 h5write(fileMax, "ts",ts[:]) # time
 h5write(fileMax, "pidotmaxs",pidotmaxval[:]) # max of first time deriv of pi
 h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:]) # max of second angular deriv of phi
+h5write(fileMax, "energy_flux",energyfluxval[:])
+h5write(fileMax, "cumulative_energy_flux",cumulativeenergyfluxval[:])
+
