@@ -74,6 +74,9 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
 
                 #Print out energy
                 println("Energy ", energy);
+                println("Energy flux ", energyfluxval[t]);
+                println("Cumulative energy flux ", cumulativeenergyfluxval[t]);
+
                 
                 println("");
             end
