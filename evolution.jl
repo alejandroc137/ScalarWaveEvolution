@@ -27,13 +27,13 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                 println("Saving Snapshot at ",ts[t],"/",Tf);
 
                 @inbounds for iz=2:(Nz0-1)
-                    phidot_M[1,iz]=-pi_Mn1[1,iz]/gtt[1,iz]
+                    phidot_Mn[1,iz]=-pi_Mn1[1,iz]/gtt[1,iz]
                 end
     
-                spatial!(phidot_M,phidotdy_M,phidotdz_M)
+                spatial!(phidot_Mn,phidotdy_Mn,phidotdz_Mn)
 
                 #Calculate the energy
-                energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
+                energy=energyNLC(phi_Mn1,phidx_Mn,phidy_Mn,phidz_Mn,phidot_Mn)
 
                 fileData=location*"Wave_"*case_name*"_$(ts[t]).h5" #@Truong
                 
@@ -89,6 +89,8 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
             h5write(fileMax, "ts",ts[:]) # time
             h5write(fileMax, "pidotmaxs",pidotmaxval[:]) # max of first time deriv of pi
             h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:]) # max of second angular deriv of phi
+            h5write(fileMax, "phidthdthmax_ys",phidthdthmaxval_y[:]) # Where are the supremes located?
+            h5write(fileMax, "phidthdthmax_zs",phidthdthmaxval_z[:])
             h5write(fileMax, "energy_flux",energyfluxval[:])
             h5write(fileMax, "cumulative_energy_flux",cumulativeenergyfluxval[:])
 
@@ -105,8 +107,11 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                     pik1_M[iy,iz] = ((pi*(-2.0 + (-1.0 + cos(pi*ys[iy]))*cos(pi*zs[iz]))*sin(pi*zs[iz])*phidz_Mn[iy,iz])/(1.0 + cos(pi*ys[iy])) + (2.0*(4.0*cos((pi*zs[iz])/2.0)^6.0*tan((pi*ys[iy])/2.0)^2.0*phidzdz_Mn[iy,iz] + (sin((pi*ys[iy])/2.0)^2.0*sqrt(1.0 + cot((pi*ys[iy])/2.0)^2.0*tan((pi*zs[iz])/2.0)^2.0)*(pi*(-2.0 + cos(pi*ys[iy])*(-1.0 + cos(pi*zs[iz])))*phidy_Mn[iy,iz] - (2.0*sin(pi*zs[iz]) + sin(2.0*pi*zs[iz]))*phidydz_Mn[iy,iz]))/sqrt(tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)+ 4.0*cos((pi*ys[iy])/2.0)^4.0*sin((pi*zs[iz])/2.0)^2.0*phidydy_Mn[iy,iz]))/(1.0 + cos(pi*zs[iz])))/pi^2.0;
             end
         end
-        phidthdthmaxval[t]=maximum(abs.(pik1_M[1:yvaltest,zvaltest1:zvaltest2]))
-
+        # phidthdthmaxval[t]=maximum(abs.(pik1_M[1:yvaltest,zvaltest1:zvaltest2]))
+        phidthdthmaxval[t], phidthdthmaxval_idx = findmax(abs.(pik1_M[1:yvaltest,zvaltest1:zvaltest2]))
+        phidthdthmaxval_y[t] = ys[phidthdthmaxval_idx[1]]
+        phidthdthmaxval_z[t] = zs[phidthdthmaxval_idx[2] + zvaltest1 - 1]
+        
         #Fourth order Runge-Kutta for the time integration
 
         #Calculate k1 term in RK4 formula

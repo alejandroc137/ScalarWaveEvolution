@@ -36,7 +36,7 @@ function parse_commandline()
             #What percentage of the grid the energy is going to be measured
             help = "Energy bound"
             arg_type = Float64
-            default = 0.95
+            default = 0.75 #0.95
         "--amp"
             help = "Amplitude"
             arg_type = Float64
@@ -177,7 +177,7 @@ zmax       =  1.0;
 
 # Define the folder name
 case_name = "$(spacetime)_$(waveeqn)_$(Am)_$(dy)_$(lambda)_$(epsKO)" #@Truong
-folder_name = "Results_"*case_name #@Truong
+folder_name = "Results_"*case_name*"_$(boundenerg)" #@Truong
 
 # Check if the folder exists
 if !isdir(folder_name)
@@ -263,6 +263,9 @@ const phidydzmaxval=collect(range(Ti, Tf, length=Nt0+1));
 
 #Max values of second angular derivatives
 const phidthdthmaxval=collect(range(Ti, Tf, length=Nt0+1)); #theta
+const phidthdthmaxval_y=collect(range(Ti, Tf, length=Nt0+1)); # y-coord of location of max
+const phidthdthmaxval_z=collect(range(Ti, Tf, length=Nt0+1)); # z-coord of location of max
+
 const phidphidphimaxval=collect(range(Ti, Tf, length=Nt0+1)); #phi
 
 yvaltest = round(Int, (boundenerg - ymin)/dy) + 1;
@@ -487,6 +490,7 @@ end
 h5write(fileMax, "ts",ts[:]) # time
 h5write(fileMax, "pidotmaxs",pidotmaxval[:]) # max of first time deriv of pi
 h5write(fileMax, "phidthdthmaxs",phidthdthmaxval[:]) # max of second angular deriv of phi
+h5write(fileMax, "phidthdthmax_ys",phidthdthmaxval_y[:]) # Where are the supremes located?
+h5write(fileMax, "phidthdthmax_zs",phidthdthmaxval_z[:])
 h5write(fileMax, "energy_flux",energyfluxval[:])
 h5write(fileMax, "cumulative_energy_flux",cumulativeenergyfluxval[:])
-

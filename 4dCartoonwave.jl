@@ -221,7 +221,7 @@ function RHS_Eq!(phi_Mn,pi_Mn,phidx_Mn,pidx_Mn,phidy_Mn,pidy_Mn,phidz_Mn,pidz_Mn
 
             #Eq. 23
             phidot_Mn[iy,iz]=-pi_Mn[iy,iz]/gtt[iy,iz];
-
+            
             #Eq. 24
             #cubic, timederivs, and quasi control which nonlinearities are "turned on"
             pidot_Mn[iy,iz]=(-(sqrtming[iy,iz]*(cubic*phi_Mn[iy,iz]^3.0 + timederivs*(-pi_Mn[iy,iz]/gtt[iy,iz])^2.0*phi_Mn[iy,iz] - 2.0*timederivs*quasi*phi_Mn[iy,iz]))    + gyz[iy,iz]*sqrtming_dy[iy,iz]*phidz_Mn[iy,iz] + gxz[iy,iz]*sqrtming_dx[iy,iz]*phidz_Mn[iy,iz] + gzz[iy,iz]*(sqrtming_dz[iy,iz]*phidz_Mn[iy,iz] + sqrtming[iy,iz]*phidzdz_Mn[iy,iz])+ gyz[iy,iz]*sqrtming_dz[iy,iz]*phidy_Mn[iy,iz] + gyy[iy,iz]*sqrtming_dy[iy,iz]*phidy_Mn[iy,iz] + gxy[iy,iz]*sqrtming_dx[iy,iz]*phidy_Mn[iy,iz] + (gxz[iy,iz]*sqrtming_dz[iy,iz] + gxy[iy,iz]*sqrtming_dy[iy,iz] + gxx[iy,iz]*sqrtming_dx[iy,iz])*phidx_Mn[iy,iz] + sqrtming[iy,iz]*((gzz_dz[iy,iz] + gyz_dy[iy,iz] + gxz_dx[iy,iz])*phidz_Mn[iy,iz] + (gyz_dz[iy,iz] + gyy_dy[iy,iz] + gxy_dx[iy,iz])*phidy_Mn[iy,iz] + 2.0*gyz[iy,iz]*phidydz_Mn[iy,iz] + gyy[iy,iz]*phidydy_Mn[iy,iz] + (gxz_dz[iy,iz] + gxy_dy[iy,iz] + gxx_dx[iy,iz])*phidx_Mn[iy,iz]  + 2.0*gxz[iy,iz]*phidxdz_Mn[iy,iz] + 2.0*gxy[iy,iz]*phidxdy_Mn[iy,iz] + gxx[iy,iz]*phidxdx_Mn[iy,iz]))/sqrtming[iy,iz]/(1.0-timederivs*phi_Mn[iy,iz]^2.0/gtt[iy,iz])
@@ -284,19 +284,23 @@ function spatial!(f,dyf,dzf)
 
 end
 
-#Functions to calculate energy
+########################################
+# Calculating energy
+########################################
 
-#@Truong
-#Q=Phi (the field)
 function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
     nrg=0.0;
+    nyintervals=yvaltest-1
+    nzintervals=zvaltest2-zvaltest1
     @inbounds for iy=2:yvaltest
+        wy=boundaryQuadratureWeight(iy-1,nyintervals,dy)
         @inbounds for iz=zvaltest1:zvaltest2
+                wz=boundaryQuadratureWeight(iz-zvaltest1,nzintervals,dz)
 
-                # fact = dy*dz* 1/sqrt[f(r)] * 2pi * (pi/2)^2 * tan(pi*y/2) * sec(pi*y/2)^2 * sec(pi*z/2)^2
+                # fact = wy*wz* 1/sqrt[f(r)] * 2pi * (pi/2)^2 * tan(pi*y/2) * sec(pi*y/2)^2 * sec(pi*z/2)^2
                 # where f(r) = metric function
                 # nlmwp, hayward, and bardeen control which f(r) to use
-                fact=dy*dz * (nlmwp*(1.0/sqrt(1.0 - (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))) + hayward*(1.0/sqrt(1.0 - (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) + bardeen*(1.0/sqrt(1.0 - (2.0*mBD*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) * (pi^3.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*tan((pi*ys[iy])/2.0))/2.0
+                fact=wy*wz * (nlmwp*(1.0/sqrt(1.0 - (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))) + hayward*(1.0/sqrt(1.0 - (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) + bardeen*(1.0/sqrt(1.0 - (2.0*mBD*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) * (pi^3.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*tan((pi*ys[iy])/2.0))/2.0
 
                 # energy = factor * GB
                 # where GB = (T_{\mu\nu} X^\mu) n^\nu
@@ -307,42 +311,62 @@ function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
     return nrg
 end
 
-# Outward flux of the Killing energy through the boundary of the reduced
-# cylindrical region 0 <= y <= boundenerg, -boundenerg <= z <= boundenerg.
-# In compactified cylindrical coordinates, sqrt(-g) = rho*J_y*J_z and
-# J^a_E = -T^a_t = -g^{ab} (partial_b phi) (partial_t phi).
-function energyFluxNLC(Qdx,Qdy,Qdz,Qdot)
-    flux=0.0
-
-    # Cylindrical side y = boundenerg (the y=0 face has zero area).
-    iy=yvaltest
-    rho=tan(pi*ys[iy]/2.0)
-    Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
-    @inbounds for iz=zvaltest1:zvaltest2
-        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
-        surface_factor=2.0*pi*rho*Jy*Jz*dz
-        flux-=surface_factor*Qdot[iy,iz]*(gxy[iy,iz]*Qdx[iy,iz] + gyy[iy,iz]*Qdy[iy,iz] + gyz[iy,iz]*Qdz[iy,iz])
+# Return the weight of sample k=0,...,n for fourth-order composite
+# Newton-Cotes quadrature on n uniform intervals of width h.  Simpson's 1/3
+# rule is used for an even number of intervals.  For odd n >= 3, Simpson's
+# 1/3 rule is used on the first n-3 intervals and Simpson's 3/8 rule on the
+# final three.  The trapezoidal fallback only applies to a one-interval
+# boundary, which is too coarse for a meaningful evolution but keeps the
+# helper well-defined.
+@inline function boundaryQuadratureWeight(k::Int,n::Int,h::Float64)
+    if n < 1 || k < 0 || k > n
+        throw(ArgumentError("boundary quadrature requires n >= 1 and 0 <= k <= n"))
+    elseif n == 1
+        return 0.5*h
+    elseif iseven(n)
+        if k == 0 || k == n
+            return h/3.0
+        end
+        return (isodd(k) ? 4.0 : 2.0)*h/3.0
     end
 
-    # Upper and lower caps z = +/- boundenerg. The lower outward normal
-    # reverses the sign of the coordinate-z current.
-    @inbounds for iy=2:yvaltest
-        rho=tan(pi*ys[iy]/2.0)
-        Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
-
-        iz=zvaltest2
-        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
-        surface_factor=2.0*pi*rho*Jy*Jz*dy
-        flux-=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
-
-        iz=zvaltest1
-        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
-        surface_factor=2.0*pi*rho*Jy*Jz*dy
-        flux+=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+    # Odd n >= 3: Simpson 1/3 on [0,n-3] and Simpson 3/8 on [n-3,n].
+    n13=n-3
+    if n13 == 0
+        return (k == 0 || k == n ? 3.0 : 9.0)*h/8.0
+    elseif k < n13
+        if k == 0
+            return h/3.0
+        end
+        return (isodd(k) ? 4.0 : 2.0)*h/3.0
+    elseif k == n13
+        return h/3.0 + 3.0*h/8.0
+    elseif k < n
+        return 9.0*h/8.0
     end
-
-    return flux
+    return 3.0*h/8.0
 end
+
+# #@Truong
+# #Q=Phi (the field)
+# function energyNLC(Q,Qdx,Qdy,Qdz,Qdot)
+#     nrg=0.0;
+#     @inbounds for iy=2:yvaltest
+#         @inbounds for iz=zvaltest1:zvaltest2
+
+#                 # fact = dy*dz* 1/sqrt[f(r)] * 2pi * (pi/2)^2 * tan(pi*y/2) * sec(pi*y/2)^2 * sec(pi*z/2)^2
+#                 # where f(r) = metric function
+#                 # nlmwp, hayward, and bardeen control which f(r) to use
+#                 fact=dy*dz * (nlmwp*(1.0/sqrt(1.0 - (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)/(a + b*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^2.0))) + hayward*(1.0/sqrt(1.0 - (2.0*m*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(2.0*l^2.0*m + (tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) + bardeen*(1.0/sqrt(1.0 - (2.0*mBD*(tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0))/(qBD^2.0 + tan((pi*0.0)/2.0)^2.0 + tan((pi*ys[iy])/2.0)^2.0 + tan((pi*zs[iz])/2.0)^2.0)^1.5))) * (pi^3.0*sec((pi*ys[iy])/2.0)^2.0*sec((pi*zs[iz])/2.0)^2.0*tan((pi*ys[iy])/2.0))/2.0
+
+#                 # energy = factor * GB
+#                 # where GB = (T_{\mu\nu} X^\mu) n^\nu
+#                 nrg+=fact*(2.0*cubic*Q[iy,iz]^(1.0 + 3.0) + (1.0 + 3.0)*(gzz[iy,iz]*Qdz[iy,iz]^2.0 + Qdy[iy,iz]*(2.0*gyz[iy,iz]*Qdz[iy,iz] + gyy[iy,iz]*Qdy[iy,iz]) + 2.0*(gxz[iy,iz]*Qdz[iy,iz] + gxy[iy,iz]*Qdy[iy,iz])*Qdx[iy,iz] + gxx[iy,iz]*Qdx[iy,iz]^2.0 - gtt[iy,iz]*Qdot[iy,iz]^2.0 + timederivs*Q[iy,iz]^2.0*(-2.0*quasi + Qdot[iy,iz]^2.0)))/(2.0*(1.0 + 3.0)*sqrt(-gtt[iy,iz]))
+            
+#         end
+#     end
+#     return nrg
+# end
 
 # #Linear
 # function energyC(Qdx,Qdy,Qdz,Qdot)
@@ -369,4 +393,90 @@ end
 #         end
 #     end
 #     return nrg
+# end
+
+########################################
+# Calculating energy flux
+########################################
+
+# Updated version of calculating energy flux
+# Outward flux of the Killing energy through the boundary of the reduced
+# cylindrical region 0 <= y <= boundenerg, -boundenerg <= z <= boundenerg.
+# In compactified cylindrical coordinates, sqrt(-g) = rho*J_y*J_z and
+# J^a_E = -T^a_t = -g^{ab} (partial_b phi) (partial_t phi).
+function energyFluxNLC(Qdx,Qdy,Qdz,Qdot)
+    flux=0.0
+
+    # Cylindrical side y = boundenerg (the y=0 face has zero area).
+    iy=yvaltest
+    rho=tan(pi*ys[iy]/2.0)
+    Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
+    nzintervals=zvaltest2-zvaltest1
+    @inbounds for iz=zvaltest1:zvaltest2
+        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+        wz=boundaryQuadratureWeight(iz-zvaltest1,nzintervals,dz)
+        surface_factor=2.0*pi*rho*Jy*Jz*wz
+        flux-=surface_factor*Qdot[iy,iz]*(gxy[iy,iz]*Qdx[iy,iz] + gyy[iy,iz]*Qdy[iy,iz] + gyz[iy,iz]*Qdz[iy,iz])
+    end
+
+    # Upper and lower caps z = +/- boundenerg. The lower outward normal
+    # reverses the sign of the coordinate-z current. The omitted iy=1 term
+    # is the y=0 endpoint of the quadrature and vanishes exactly because
+    # rho=0; its weight is nevertheless determined using the full interval.
+    nyintervals=yvaltest-1
+    @inbounds for iy=2:yvaltest
+        rho=tan(pi*ys[iy]/2.0)
+        Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
+        wy=boundaryQuadratureWeight(iy-1,nyintervals,dy)
+
+        iz=zvaltest2
+        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+        surface_factor=2.0*pi*rho*Jy*Jz*wy
+        flux-=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+
+        iz=zvaltest1
+        Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+        surface_factor=2.0*pi*rho*Jy*Jz*wy
+        flux+=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+    end
+
+    return flux
+end
+
+# # Previous version of calculating energy flux
+# # Outward flux of the Killing energy through the boundary of the reduced
+# # cylindrical region 0 <= y <= boundenerg, -boundenerg <= z <= boundenerg.
+# # In compactified cylindrical coordinates, sqrt(-g) = rho*J_y*J_z and
+# # J^a_E = -T^a_t = -g^{ab} (partial_b phi) (partial_t phi).
+# function energyFluxNLC(Qdx,Qdy,Qdz,Qdot)
+#     flux=0.0
+
+#     # Cylindrical side y = boundenerg (the y=0 face has zero area).
+#     iy=yvaltest
+#     rho=tan(pi*ys[iy]/2.0)
+#     Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
+#     @inbounds for iz=zvaltest1:zvaltest2
+#         Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+#         surface_factor=2.0*pi*rho*Jy*Jz*dz
+#         flux-=surface_factor*Qdot[iy,iz]*(gxy[iy,iz]*Qdx[iy,iz] + gyy[iy,iz]*Qdy[iy,iz] + gyz[iy,iz]*Qdz[iy,iz])
+#     end
+
+#     # Upper and lower caps z = +/- boundenerg. The lower outward normal
+#     # reverses the sign of the coordinate-z current.
+#     @inbounds for iy=2:yvaltest
+#         rho=tan(pi*ys[iy]/2.0)
+#         Jy=(pi/2.0)*sec(pi*ys[iy]/2.0)^2.0
+
+#         iz=zvaltest2
+#         Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+#         surface_factor=2.0*pi*rho*Jy*Jz*dy
+#         flux-=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+
+#         iz=zvaltest1
+#         Jz=(pi/2.0)*sec(pi*zs[iz]/2.0)^2.0
+#         surface_factor=2.0*pi*rho*Jy*Jz*dy
+#         flux+=surface_factor*Qdot[iy,iz]*(gxz[iy,iz]*Qdx[iy,iz] + gyz[iy,iz]*Qdy[iy,iz] + gzz[iy,iz]*Qdz[iy,iz])
+#     end
+
+#     return flux
 # end
