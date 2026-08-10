@@ -30,10 +30,10 @@ function simulation!(steps,dtR,phi_Mn1,pi_Mn1,phi_Mn2,pi_Mn2,phidx_Mn,pidx_Mn,ph
                     phidot_Mn[1,iz]=-pi_Mn1[1,iz]/gtt[1,iz]
                 end
     
-                spatial!(phidot_Mn,phidotdy_Mn,phidotdz_Mn)
+                spatial!(phidot_M,phidotdy_M,phidotdz_M)
 
                 #Calculate the energy
-                energy=energyNLC(phi_Mn1,phidx_Mn,phidy_Mn,phidz_Mn,phidot_Mn)
+                energy=energyNLC(phi_Mn1,phidx_M,phidy_M,phidz_M,phidot_M)
 
                 fileData=location*"Wave_"*case_name*"_$(ts[t]).h5" #@Truong
                 
